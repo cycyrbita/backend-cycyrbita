@@ -6,7 +6,7 @@ module.exports = function (req, res, next) {
         const {role} = req.body
 
         // проверяем роль пользователя
-        if (role !== 'user' && role !== 'admin') return next(ApiError.BadRequest('Может только admin или user'))
+        if (role !== 'role.cycyrbit' && role !== 'role.admin') return next(ApiError.BadRequest('Может только admin или cycyrbit'))
 
         // передаем управление следующему middleware
         next()

@@ -17,8 +17,8 @@ app.use(express.json())
 app.use(cookieParser())
 // cors
 app.use(cors({
-    credentials: true,
-    origin: process.env.CLIENT_URL
+    // credentials: true,
+    // origin: process.env.CLIENT_URL
 }))
 // роуты
 app.use('/api', router)

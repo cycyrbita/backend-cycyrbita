@@ -10,7 +10,7 @@ const UserSchema = new Schema({
     isActivated: {type: Boolean, default: false},
     isRecoveryPassword: {type: Boolean, default: false},
     activationLink: {type: String},
-    role: {type: String, default: 'default'},
+    role: {type: String, default: 'role.default'},
     recoveryPasswordLink: {type: String},
 })
 
