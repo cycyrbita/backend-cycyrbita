@@ -67,7 +67,7 @@ class UserController {
             // вызываем функцию и передаем ей ссылку активации
             await userService.activate(activationLink)
 
-            return res.redirect(`${process.env.CLIENT_URL}login`)
+            return res.redirect(`${process.env.CLIENT_URL}/login`)
         } catch (e) {
             next(e)
         }
@@ -144,7 +144,7 @@ class UserController {
             await userService.redirectRecoveryPassword(recoveryPasswordLink)
 
             // редиректим на восстановление пароля
-            return res.redirect(`${process.env.CLIENT_URL}recovery-password`)
+            return res.redirect(`${process.env.CLIENT_URL}/recovery-password`)
         } catch (e) {
             next(e)
         }
