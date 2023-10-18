@@ -4,7 +4,6 @@ const router = new Router()
 const {body} = require('express-validator')
 const authMiddleware = require('../middleware/auth-middleware')
 const adminMiddleware = require('../middleware/admin-middleware')
-const cycyrbitMiddleware = require('../middleware/cycyrbit-middleware')
 
 router.post('/registration', body('email').isEmail(), body('password').isLength({min: 8, max: 32}), userController.registration)
 router.post('/login', userController.login)
@@ -21,6 +20,6 @@ router.get('/activate/:link', userController.activate)
 // список пользователей
 router.post('/users', authMiddleware, adminMiddleware, userController.getUsers)
 router.delete('/delete-user', authMiddleware, adminMiddleware, userController.deleteUser)
-router.post('/edit-role', userController.editRole)
+router.post('/edit-role', authMiddleware, adminMiddleware, userController.editRole)
 
 module.exports = router
