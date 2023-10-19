@@ -83,7 +83,7 @@ class UserController {
             // записываем в куки токен
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
-            return res.json(userData)
+            return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
             next(e)
         }
@@ -93,6 +93,19 @@ class UserController {
         try {
             const users = await userService.getUsers()
             return res.json({users})
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async lastActivityAt(req, res, next) {
+        try {
+            // получаем почту
+            const {email} = req.body
+            // вызываем функцию обновления даты
+            const newData = await userService.lastActivityAt(email)
+
+            return res.json({message: `Дата последнего входа ${newData}`})
         } catch (e) {
             next(e)
         }

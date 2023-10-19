@@ -1,17 +1,20 @@
 const {Schema, model} = require('mongoose')
 
 const UserSchema = new Schema({
-    firstName: {type: String, require: true},
-    lastName: {type: String},
-    age: {type: String},
-    avatarImg: {type: String, default: "avatar-default.png"},
-    email: {type: String, unique: true, require: true},
-    password: {type: String, require: true},
-    isActivated: {type: Boolean, default: false},
-    isRecoveryPassword: {type: Boolean, default: false},
-    activationLink: {type: String},
-    role: {type: String, default: 'role.default'},
-    recoveryPasswordLink: {type: String},
+    nickName: {type: String, require: true, default: 'Кукурбит'},                // nickName
+    firstName: {type: String, require: true, default: 'Неопознанная Кукурбита'}, // Имя
+    lastName: {type: String, require: true, default: 'Нет'},                     // Фамилия
+    age: {type: String, require: true, default: 'Нет'},                          // Возраст
+    avatarImg: {type: String, default: "avatar-default.png"},                    // Аватарка
+    email: {type: String, unique: true, require: true},                          // Почта
+    password: {type: String, require: true},                                     // Пароль
+    role: {type: String, default: 'role.default'},                               // Роль (role.admin/role.cycyrbit/role.default)
+    isActivated: {type: Boolean, default: false},                                // Активация аккаунта через почту
+    activationLink: {type: String},                                              // Ссылка которая приходит на почту для активации
+    isRecoveryPassword: {type: Boolean, default: false},                         // Если нужно сменить пароль
+    recoveryPasswordLink: {type: String},                                        // Ссылка для смены пароля
+    edits: {type: Array, default: []},                                           // Список какие страницы можно редактировать
+    lastActivityAt: { type: Date, default: Date.now },                           // Дата последней активности
 })
 
-module.exports = model('User', UserSchema)
+module.exports = model('User', UserSchema.set('timestamps', true))

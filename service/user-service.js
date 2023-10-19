@@ -121,6 +121,22 @@ class UserService {
         return users
     }
 
+    async lastActivityAt(email) {
+        // поиск пользователя в базе
+        const user = await UserModel.findOne({email})
+
+        // создаем новую дату
+        const newData = Date.now()
+
+        // меняем дату последней активности
+        user.lastActivityAt = newData
+
+        // сохраняем
+        user.save()
+
+        return newData
+    }
+
     async deleteUser(id) {
         await UserModel.deleteOne({_id: new ObjectId(id)})
         return
