@@ -92,7 +92,7 @@ class UserController {
     async getUsers(req, res, next) {
         try {
             const users = await userService.getUsers()
-            return res.json({users})
+            return res.json(users)
         } catch (e) {
             next(e)
         }
@@ -121,10 +121,20 @@ class UserController {
         }
     }
 
+    async restoreUser(req, res, next) {
+        try {
+            const {email, id} = req.body
+            await userService.restoreUser(id)
+            return res.json({message: `Пользователь с почтой ${email} восстановлен`})
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async editRole(req, res, next) {
         try {
-            const {id, role} = req.body
-            const newRole = await userService.editRole(id, role)
+            const {id, editRole} = req.body
+            const newRole = await userService.editRole(id, editRole)
             return res.json(newRole)
         } catch (e) {
             next(e)

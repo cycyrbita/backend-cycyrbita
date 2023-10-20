@@ -15,6 +15,7 @@ const UserSchema = new Schema({
     recoveryPasswordLink: {type: String},                                        // Ссылка для смены пароля
     edits: {type: Array, default: []},                                           // Список какие страницы можно редактировать
     lastActivityAt: { type: Date, default: Date.now },                           // Дата последней активности
+    accountDeleted: {type: Boolean, default: false},
 })
 
 module.exports = model('User', UserSchema.set('timestamps', true))

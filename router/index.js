@@ -23,6 +23,7 @@ router.get('/activate/:link', userController.activate)
 // список пользователей
 router.post('/users', authMiddleware, adminMiddleware, userController.getUsers)
 router.delete('/delete-user', authMiddleware, adminMiddleware, userController.deleteUser)
+router.post('/restore-user', authMiddleware, adminMiddleware, userController.restoreUser)
 router.post('/edit-role', authMiddleware, adminMiddleware, userController.editRole)
 
 module.exports = router

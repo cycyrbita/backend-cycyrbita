@@ -64,6 +64,9 @@ class UserService {
         // проверка на существования в базе пользователя
         if(!user) throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} не найден`)
 
+        // проверка на блокировку
+        if(user.accountDeleted) throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} заблокирован`)
+
         // функция compare принимает пароль который ввели и хеширует его, затем вторым параметром передаем пароль с базы в хешированном виде и сравнивает их
         const isPassEquals = await bcrypt.compare(password, user.password)
 
@@ -138,16 +141,35 @@ class UserService {
     }
 
     async deleteUser(id) {
-        await UserModel.deleteOne({_id: new ObjectId(id)})
+        const user = await UserModel.findById(id)
+
+        // удаляем пользователя(просто меняем флаг)
+        user.accountDeleted = true
+
+        // сохраняем
+        user.save()
+
         return
     }
 
-    async editRole(id, role) {
+    async restoreUser(id) {
+        const user = await UserModel.findById(id)
+
+        // восстанавливаем пользователя(просто меняем флаг)
+        user.accountDeleted = false
+
+        // сохраняем
+        user.save()
+
+        return
+    }
+
+    async editRole(id, editRole) {
         // достаем по id
         const user = await UserModel.findById(id)
 
         // меняем роль
-        user.role = role
+        user.role = editRole
 
         // сохраняем
         await user.save()
@@ -166,6 +188,9 @@ class UserService {
 
         // проверка на существования в базе пользователя
         if(!user) throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} не найден`)
+
+        // проверка на блокировку
+        if(user.accountDeleted) throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} заблокирован`)
 
         // получаем рандомную строку для генерации ссылки восстановления пароля
         const recoveryPasswordLink = uuid.v4()
@@ -206,6 +231,9 @@ class UserService {
 
         // проверка на существования в базе пользователя
         if(!user) throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} не найден`)
+
+        // проверка на блокировку
+        if(user.accountDeleted) throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} заблокирован`)
 
         // проверка флага восстановления пароля
         if(!user.isRecoveryPassword) throw ApiError.BadRequest(`Перейдите по почте`)
