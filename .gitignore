@@ -80,6 +80,8 @@ dist
 # IDE / Editor
 .idea
 
+.env
+
 # Service worker
 sw.*
 

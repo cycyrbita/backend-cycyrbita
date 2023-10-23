@@ -26,6 +26,9 @@ class MailService {
                         <a href="${link}">${link}</a>
                     </div>
                 `
+        }, (error, info) => {
+            if (error) return console.log(error)
+            console.log('Email sent: ' + info.response)
         })
     }
 
@@ -42,6 +45,9 @@ class MailService {
                         <a href="${link}">${link}</a>
                     </div>
                 `
+        }, (error, info) => {
+            if (error) return console.log(error)
+            console.log('Email sent: ' + info.response)
         })
     }
 }
