@@ -1,12 +1,15 @@
-// const ingredientService = require('../service/ingredient-service')
-// const {validationResult} = require('express-validator')
-// const ApiError = require('../exceptions/api-error')
+const sharp = require('sharp')
+const path = require('path')
 
 class IngredientController {
     async create(req, res, next) {
         try {
-            const {} = req.body
-            return res.json({message: 'Ingredients'})
+            await sharp(req.file.path)
+                .resize(100, 100)
+                .jpeg({ quality: 90 })
+                .toFile(path.resolve(req.file.destination, 'resized', req.file.filename))
+
+            return res.json(req.file)
         } catch (e) {
             next(e)
         }
