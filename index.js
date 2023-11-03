@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const router = require('./router/index')
 const errorMiddleware = require('./middleware/error-middleware')
+const fileUpload = require('express-fileupload')
 
 // порт нашего сервера
 const PORT = process.env.PORT || 5000
@@ -20,6 +21,8 @@ app.use(cors({
     credentials: true,
     origin: process.env.CLIENT_URL
 }))
+// работа с файлами
+app.use(fileUpload())
 // роуты
 app.use('/api', router)
 // обработка ошибок
