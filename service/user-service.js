@@ -5,11 +5,10 @@ const mailService = require('./mail-service')
 const tokenService = require('./token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../exceptions/api-error')
-const {ObjectId} = require("mongodb");
 
 class UserService {
     async registration(email, password, firstName) {
-        // поиск пользователя в базу
+        // поиск пользователя в базе
         const candidate = await UserModel.findOne({email})
 
         // проверка на существования в базе пользователя
