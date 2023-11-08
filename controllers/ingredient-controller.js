@@ -4,14 +4,18 @@ const ApiError = require("../exceptions/api-error")
 class IngredientController {
     async create(req, res, next) {
         try {
-            // проверка на файлы
-            if(!req.files) throw ApiError.BadRequest(`Файлов нет!`)
-
-            let ingredientsImages = req.files
+            let ingredientsImages = null
+            // данные ингредиента
             let ingredients = JSON.parse(req.body.ingredients)
+
+            // проверка на файлы
+            if(req.files) ingredientsImages = req.files.ingredientsImages
 
             // если это не массив то делаем из него массив
             if(ingredientsImages && !Array.isArray(req.files.ingredientsImages)) ingredientsImages = [req.files.ingredientsImages]
+
+            console.log(ingredients)
+            // console.log(ingredientsImages)
 
             // запускаем функцию создания ингредиента
             const ingredientData = await IngredientService.create(ingredientsImages, ingredients)
