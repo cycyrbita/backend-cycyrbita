@@ -8,36 +8,9 @@ const IngredientCountryModel = require('../models/ingredients/ingerdient_country
 const IngredientTagModel = require('../models/ingredients/ingerdient_tag-model')
 const IngredientThemeModel = require('../models/ingredients/ingerdient_theme-model')
 const IngredientTitleModel = require('../models/ingredients/ingerdient_title-model')
-const {_logFunc} = require("nodemailer/lib/shared");
 
 class IngredientService {
     async create(ingredientsImages, ingredients) {
-        // объект с ошибками
-        const errorMessages = {
-            countrys: {
-                messageCountry: '',
-            },
-            themes: {
-                messageTheme: '',
-            },
-            titles: {
-                messageTitle: '',
-                messageCountry: '',
-            },
-            descriptions: {
-                messageDescription: '',
-                messageCountry: '',
-                messageTheme: '',
-            },
-            tags: {
-                messageTag: '',
-                messageTheme: '',
-            },
-            images: {
-                messageImage: '',
-            },
-        }
-
         // список файлов которые не прошли проверку
         let errorMimetype = []
 
@@ -97,7 +70,7 @@ class IngredientService {
             // пробегаемся по языкам
             for(const country of countrys) {
                 // проверка на пустоту и создание языка
-                if(country.country) countrysDb.push(await IngredientCountryModel.create(country))
+                if(country.country.trim() !== "") countrysDb.push(await IngredientCountryModel.create(country))
             }
         }
 
@@ -106,11 +79,9 @@ class IngredientService {
             // пробегаемся по темам
             for(const theme of themes) {
                 // проверка на пустоту и создание тем
-                if(theme.theme)themesDb.push(await IngredientThemeModel.create(theme))
+                if(theme.theme.trim() !== "")themesDb.push(await IngredientThemeModel.create(theme))
             }
         }
-
-        console.log(descriptions)
 
         // проверка есть ли описания
         if(descriptions.length) {
