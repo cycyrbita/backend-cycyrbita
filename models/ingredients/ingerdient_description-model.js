@@ -6,4 +6,4 @@ const IngredientDescriptionSchema = new Schema({
   themes: {type: Array},
 })
 
-module.exports = model('IngredientDescription', IngredientDescriptionSchema.set('timestamps', true))
+module.exports = model('IngredientDescription', IngredientDescriptionSchema)

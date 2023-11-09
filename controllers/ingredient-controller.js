@@ -14,7 +14,7 @@ class IngredientController {
             // если это не массив то делаем из него массив
             if(ingredientsImages && !Array.isArray(req.files.ingredientsImages)) ingredientsImages = [req.files.ingredientsImages]
 
-            console.log(ingredients)
+            // console.log(ingredients)
             // console.log(ingredientsImages)
 
             // запускаем функцию создания ингредиента

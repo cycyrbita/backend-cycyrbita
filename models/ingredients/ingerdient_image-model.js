@@ -5,4 +5,4 @@ const IngredientImageSchema = new Schema({
   alt: {type: String}
 })
 
-module.exports = model('IngredientImage', IngredientImageSchema.set('timestamps', true))
+module.exports = model('IngredientImage', IngredientImageSchema)

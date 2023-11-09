@@ -5,4 +5,4 @@ const IngredientTitleSchema = new Schema({
   country: {type: String}
 })
 
-module.exports = model('IngredientTitle', IngredientTitleSchema.set('timestamps', true))
+module.exports = model('IngredientTitle', IngredientTitleSchema)

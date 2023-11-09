@@ -4,4 +4,4 @@ const IngredientThemeSchema = new Schema({
   theme: {type: String}
 })
 
-module.exports = model('IngredientTheme', IngredientThemeSchema.set('timestamps', true))
+module.exports = model('IngredientTheme', IngredientThemeSchema)

@@ -5,4 +5,4 @@ const IngredientTagSchema = new Schema({
   themes: {type: Array},
 })
 
-module.exports = model('IngredientTag', IngredientTagSchema.set('timestamps', true))
+module.exports = model('IngredientTag', IngredientTagSchema)

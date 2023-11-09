@@ -20,6 +20,14 @@ class IngredientService {
         const tags = ingredients.tags
         const images = []
 
+        // данные после загрузки в базу
+        const countrysDb = []
+        const themesDb = []
+        const titlesDb = []
+        const descriptionsDb = []
+        const tagsDb = []
+        const imagesDb = []
+
         // проверка на файлы
         if(!!ingredientsImages) {
             // указываем типы которые хотим принимать
@@ -51,21 +59,65 @@ class IngredientService {
                     .toBuffer((err) => {if(err) console.log(err)})
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
 
-                await IngredientImageModel.create({src: fileName})
+                imagesDb.push(await IngredientImageModel.create({src: fileName, alt: 'Картинка'}))
 
                 // пушим картинку в массив картинок
                 images.push(fileName)
             }
         }
 
-        console.log(countrys)
-
+        // создание с языков
         if(countrys.length) {
             for(const country of countrys) {
-                let asd = await IngredientCountryModel.create(country)
-                console.log(asd)
+                countrysDb.push(await IngredientCountryModel.create(country))
             }
         }
+
+        // создание тем
+        if(themes.length) {
+            for(const theme of themes) {
+                themesDb.push(await IngredientThemeModel.create(theme))
+            }
+        }
+
+        // создание описаний
+        if(descriptions.length) {
+            for(const description of descriptions) {
+                let themes = themesDb.filter(el => description.themes.includes(el.theme))
+                if(themes.length) {
+                    descriptionsDb.push(await IngredientDescriptionModel.create({description: description.description, country: description.country, themes}))
+                }
+            }
+        }
+
+        // создание тегов
+        if(tags.length) {
+            for(const tag of tags) {
+                let themes = themesDb.filter(el => tag.themes.includes(el.theme))
+                if(themes.length) {
+                    tagsDb.push(await IngredientTagModel.create({tag: tag.tag, themes}))
+                }
+            }
+        }
+
+        // создание названий
+        if(titles.length) {
+            for(const title of titles) {
+                const country = countrysDb.filter(el => title.country === el.country)
+                if(country.length) {
+                    titlesDb.push(await IngredientTitleModel.create({title: title.title, country: title.country}))
+                }
+            }
+        }
+
+        await IngredientModel.create({
+            countrys: countrysDb,
+            themes: themesDb,
+            titles: titlesDb,
+            descriptions: descriptionsDb,
+            tags: tagsDb,
+            images: imagesDb
+        })
 
         return 'Ингредиент создан!'
     }
