@@ -8,17 +8,45 @@ const IngredientCountryModel = require('../models/ingredients/ingerdient_country
 const IngredientTagModel = require('../models/ingredients/ingerdient_tag-model')
 const IngredientThemeModel = require('../models/ingredients/ingerdient_theme-model')
 const IngredientTitleModel = require('../models/ingredients/ingerdient_title-model')
+const {_logFunc} = require("nodemailer/lib/shared");
 
 class IngredientService {
     async create(ingredientsImages, ingredients) {
+        // объект с ошибками
+        const errorMessages = {
+            countrys: {
+                messageCountry: '',
+            },
+            themes: {
+                messageTheme: '',
+            },
+            titles: {
+                messageTitle: '',
+                messageCountry: '',
+            },
+            descriptions: {
+                messageDescription: '',
+                messageCountry: '',
+                messageTheme: '',
+            },
+            tags: {
+                messageTag: '',
+                messageTheme: '',
+            },
+            images: {
+                messageImage: '',
+            },
+        }
+
         // список файлов которые не прошли проверку
         let errorMimetype = []
+
+        // упрощаем обращение к данным
         const countrys = ingredients.countrys
         const themes = ingredients.themes
         const titles = ingredients.titles
         const descriptions = ingredients.descriptions
         const tags = ingredients.tags
-        const images = []
 
         // данные после загрузки в базу
         const countrysDb = []
@@ -59,57 +87,74 @@ class IngredientService {
                     .toBuffer((err) => {if(err) console.log(err)})
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
 
+                // создаем картинку в базе и пушим в переменную imagesDb
                 imagesDb.push(await IngredientImageModel.create({src: fileName, alt: 'Картинка'}))
-
-                // пушим картинку в массив картинок
-                images.push(fileName)
             }
         }
 
-        // создание с языков
+        // проверка есть ли языки
         if(countrys.length) {
+            // пробегаемся по языкам
             for(const country of countrys) {
-                countrysDb.push(await IngredientCountryModel.create(country))
+                // проверка на пустоту и создание языка
+                if(country.country) countrysDb.push(await IngredientCountryModel.create(country))
             }
         }
 
-        // создание тем
+        // проверка есть ли темы
         if(themes.length) {
+            // пробегаемся по темам
             for(const theme of themes) {
-                themesDb.push(await IngredientThemeModel.create(theme))
+                // проверка на пустоту и создание тем
+                if(theme.theme)themesDb.push(await IngredientThemeModel.create(theme))
             }
         }
 
-        // создание описаний
+        console.log(descriptions)
+
+        // проверка есть ли описания
         if(descriptions.length) {
+            // пробегаемся по описаниям
             for(const description of descriptions) {
+                // проверяем есть ли совпадения между темами ингредиента и темами описания и если есть создаем массив из них
                 let themes = themesDb.filter(el => description.themes.includes(el.theme))
+                // проверка на пустоту
                 if(themes.length) {
+                    // создаем описание в базе и пушим в переменную descriptionsDb
                     descriptionsDb.push(await IngredientDescriptionModel.create({description: description.description, country: description.country, themes}))
                 }
             }
         }
 
-        // создание тегов
+        // проверка есть ли теги
         if(tags.length) {
+            // пробегаемся по тегам
             for(const tag of tags) {
+                // проверяем есть ли совпадения между темами ингредиента и темами тега и если есть создаем массив из них
                 let themes = themesDb.filter(el => tag.themes.includes(el.theme))
+                // проверка на пустоту
                 if(themes.length) {
+                    // создаем тег в базе и пушим в переменную tagsDb
                     tagsDb.push(await IngredientTagModel.create({tag: tag.tag, themes}))
                 }
             }
         }
 
-        // создание названий
+        // проверка есть ли названия
         if(titles.length) {
+            // пробегаемся по названиям
             for(const title of titles) {
+                // проверяем есть ли совпадения между языками ингредиента и языками названий и если есть создаем массив из них
                 const country = countrysDb.filter(el => title.country === el.country)
+                // проверка на пустоту
                 if(country.length) {
+                    // создаем название в базе и пушим в переменную titlesDb
                     titlesDb.push(await IngredientTitleModel.create({title: title.title, country: title.country}))
                 }
             }
         }
 
+        // создаем ингредиент
         await IngredientModel.create({
             countrys: countrysDb,
             themes: themesDb,
