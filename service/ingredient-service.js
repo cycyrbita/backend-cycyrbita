@@ -61,7 +61,7 @@ class IngredientService {
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
 
                 // создаем картинку в базе и пушим в переменную imagesDb
-                imagesDb.push(await IngredientImageModel.create({src: fileName, alt: 'Картинка'}))
+                imagesDb.push(await IngredientImageModel.create({src: `${process.env.IMG_PATH}/ingredients/${fileName}`, alt: 'Картинка'}))
             }
         }
 
@@ -88,7 +88,7 @@ class IngredientService {
             // пробегаемся по описаниям
             for(const description of descriptions) {
                 // проверяем есть ли совпадения между темами ингредиента и темами описания и если есть создаем массив из них
-                let themes = themesDb.filter(el => description.themes.includes(el.theme))
+                let themes = themesDb.filter(el => description.themes.find(item => item.theme === el.theme))
                 // проверка на пустоту
                 if(themes.length) {
                     // создаем описание в базе и пушим в переменную descriptionsDb
@@ -102,7 +102,7 @@ class IngredientService {
             // пробегаемся по тегам
             for(const tag of tags) {
                 // проверяем есть ли совпадения между темами ингредиента и темами тега и если есть создаем массив из них
-                let themes = themesDb.filter(el => tag.themes.includes(el.theme))
+                let themes = themesDb.filter(el => tag.themes.find(item => item.theme === el.theme))
                 // проверка на пустоту
                 if(themes.length) {
                     // создаем тег в базе и пушим в переменную tagsDb
@@ -126,7 +126,7 @@ class IngredientService {
         }
 
         // создаем ингредиент
-        await IngredientModel.create({
+        const ingredient = await IngredientModel.create({
             countrys: countrysDb,
             themes: themesDb,
             titles: titlesDb,
@@ -135,7 +135,7 @@ class IngredientService {
             images: imagesDb
         })
 
-        return 'Ингредиент создан!'
+        return ingredient
     }
 }
 
