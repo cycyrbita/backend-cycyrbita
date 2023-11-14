@@ -15,14 +15,14 @@ class IngredientService {
         let errorMimetype = []
 
         // упрощаем обращение к данным
-        const countrys = ingredients.countrys
+        const countries = ingredients.countries
         const themes = ingredients.themes
         const titles = ingredients.titles
         const descriptions = ingredients.descriptions
         const tags = ingredients.tags
 
         // данные после загрузки в базу
-        const countrysDb = []
+        const countriesDb = []
         const themesDb = []
         const titlesDb = []
         const descriptionsDb = []
@@ -66,11 +66,11 @@ class IngredientService {
         }
 
         // проверка есть ли языки
-        if(countrys.length) {
+        if(countries.length) {
             // пробегаемся по языкам
-            for(const country of countrys) {
+            for(const country of countries) {
                 // проверка на пустоту и создание языка
-                if(country.country.trim() !== "") countrysDb.push(await IngredientCountryModel.create(country))
+                if(country.country.trim() !== "") countriesDb.push(await IngredientCountryModel.create(country))
             }
         }
 
@@ -88,7 +88,7 @@ class IngredientService {
             // пробегаемся по описаниям
             for(const description of descriptions) {
                 // проверяем есть ли совпадения между темами ингредиента и темами описания и если есть создаем массив из них
-                let themes = themesDb.filter(el => description.themes.find(item => item.theme === el.theme))
+                let themes = themesDb.filter(el => description.themes.find(item => item.theme.toLowerCase() === el.theme.toLowerCase()))
                 // проверка на пустоту
                 if(themes.length) {
                     // создаем описание в базе и пушим в переменную descriptionsDb
@@ -102,7 +102,7 @@ class IngredientService {
             // пробегаемся по тегам
             for(const tag of tags) {
                 // проверяем есть ли совпадения между темами ингредиента и темами тега и если есть создаем массив из них
-                let themes = themesDb.filter(el => tag.themes.find(item => item.theme === el.theme))
+                let themes = themesDb.filter(el => tag.themes.find(item => item.theme.toLowerCase() === el.theme.toLowerCase()))
                 // проверка на пустоту
                 if(themes.length) {
                     // создаем тег в базе и пушим в переменную tagsDb
@@ -116,7 +116,7 @@ class IngredientService {
             // пробегаемся по названиям
             for(const title of titles) {
                 // проверяем есть ли совпадения между языками ингредиента и языками названий и если есть создаем массив из них
-                const country = countrysDb.filter(el => title.country === el.country)
+                const country = countriesDb.filter(el => title.country.toLowerCase() === el.country.toLowerCase())
                 // проверка на пустоту
                 if(country.length) {
                     // создаем название в базе и пушим в переменную titlesDb
@@ -127,7 +127,7 @@ class IngredientService {
 
         // создаем ингредиент
         const ingredient = await IngredientModel.create({
-            countrys: countrysDb,
+            countries: countriesDb,
             themes: themesDb,
             titles: titlesDb,
             descriptions: descriptionsDb,

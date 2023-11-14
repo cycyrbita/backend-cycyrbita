@@ -1,7 +1,7 @@
 const {Schema, model} = require('mongoose')
 
 const IngredientSchema = new Schema({
-  countrys: {type: Array},
+  countries: {type: Array},
   themes: {type: Array},
   titles: {type: Array},
   descriptions: {type: Array},
