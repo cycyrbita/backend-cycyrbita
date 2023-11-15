@@ -69,8 +69,13 @@ class IngredientService {
         if(countries.length) {
             // пробегаемся по языкам
             for(const country of countries) {
+                if(country.country.trim() !== '') countriesDb.push()
+                // поиск похожей темы
+                const repeatСountry = await IngredientCountryModel.find(country)
+                // не загружаем если тема есть
+                if(repeatСountry.length) continue
                 // проверка на пустоту и создание языка
-                if(country.country.trim() !== "") countriesDb.push(await IngredientCountryModel.create(country))
+                await IngredientCountryModel.create(country)
             }
         }
 
@@ -78,8 +83,14 @@ class IngredientService {
         if(themes.length) {
             // пробегаемся по темам
             for(const theme of themes) {
+                // роверка на пустоту
+                if(theme.theme.trim() !== '') themesDb.push(theme)
+                // поиск похожей темы
+                const repeatTheme = await IngredientThemeModel.find(theme)
+                // не загружаем если тема есть
+                if(repeatTheme.length) continue
                 // проверка на пустоту и создание тем
-                if(theme.theme.trim() !== "")themesDb.push(await IngredientThemeModel.create(theme))
+                await IngredientThemeModel.create(theme)
             }
         }
 
@@ -101,12 +112,18 @@ class IngredientService {
         if(tags.length) {
             // пробегаемся по тегам
             for(const tag of tags) {
+                // поиск похожего тега
+                const repeatTag = await IngredientTagModel.find(tag)
+
                 // проверяем есть ли совпадения между темами ингредиента и темами тега и если есть создаем массив из них
                 let themes = themesDb.filter(el => tag.themes.find(item => item.theme.toLowerCase() === el.theme.toLowerCase()))
                 // проверка на пустоту
                 if(themes.length) {
                     // создаем тег в базе и пушим в переменную tagsDb
-                    tagsDb.push(await IngredientTagModel.create({tag: tag.tag, themes}))
+                    tagsDb.push({tag: tag.tag, themes})
+                    // не загружаем если тег есть
+                    if(repeatTag.length) continue
+                    await IngredientTagModel.create({tag: tag.tag, themes})
                 }
             }
         }
@@ -136,6 +153,15 @@ class IngredientService {
         })
 
         return ingredient
+    }
+
+    async getOptions() {
+        const options = {}
+
+        options.themes = await IngredientThemeModel.find()
+        options.tags = await IngredientTagModel.find()
+
+        return options
     }
 }
 

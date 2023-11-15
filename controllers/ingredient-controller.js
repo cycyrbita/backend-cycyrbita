@@ -1,5 +1,4 @@
 const IngredientService = require("../service/ingredient-service")
-const ApiError = require("../exceptions/api-error")
 
 class IngredientController {
     async create(req, res, next) {
@@ -21,6 +20,15 @@ class IngredientController {
             const ingredientData = await IngredientService.create(ingredientsImages, ingredients)
 
             return res.json({ingredientData})
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async getOptions (req, res, next) {
+        try {
+            const options = await IngredientService.getOptions()
+            return res.json(options)
         } catch (e) {
             next(e)
         }
