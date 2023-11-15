@@ -69,10 +69,10 @@ class IngredientService {
         if(countries.length) {
             // пробегаемся по языкам
             for(const country of countries) {
-                if(country.country.trim() !== '') countriesDb.push()
-                // поиск похожей темы
+                if(country.country.trim() !== '') countriesDb.push(country)
+                // поиск похожего языка
                 const repeatСountry = await IngredientCountryModel.find(country)
-                // не загружаем если тема есть
+                // не загружаем если язык есть
                 if(repeatСountry.length) continue
                 // проверка на пустоту и создание языка
                 await IngredientCountryModel.create(country)
