@@ -69,13 +69,16 @@ class IngredientService {
         if(countries.length) {
             // пробегаемся по языкам
             for(const country of countries) {
-                if(country.country.trim() !== '') countriesDb.push(country)
+                if(country.country.trim() === '') continue
                 // поиск похожего языка
                 const repeatСountry = await IngredientCountryModel.find(country)
-                // не загружаем если язык есть
-                if(repeatСountry.length) continue
-                // проверка на пустоту и создание языка
-                await IngredientCountryModel.create(country)
+                // загружаем если языка нет
+                if(!repeatСountry.length) {
+                    countriesDb.push(await IngredientCountryModel.create(country))
+                    continue
+                }
+                // пушим
+                countriesDb.push(repeatСountry[0])
             }
         }
 
@@ -83,14 +86,17 @@ class IngredientService {
         if(themes.length) {
             // пробегаемся по темам
             for(const theme of themes) {
-                // роверка на пустоту
-                if(theme.theme.trim() !== '') themesDb.push(theme)
+                // проверка на пустоту
+                if(theme.theme.trim() === '') continue
                 // поиск похожей темы
                 const repeatTheme = await IngredientThemeModel.find(theme)
-                // не загружаем если тема есть
-                if(repeatTheme.length) continue
-                // проверка на пустоту и создание тем
-                await IngredientThemeModel.create(theme)
+                // загружаем если темы нету
+                if(!repeatTheme.length) {
+                    themesDb.push(await IngredientThemeModel.create(theme))
+                    continue
+                }
+                // пушим
+                themesDb.push(repeatTheme[0])
             }
         }
 
@@ -112,18 +118,31 @@ class IngredientService {
         if(tags.length) {
             // пробегаемся по тегам
             for(const tag of tags) {
-                // поиск похожего тега
-                const repeatTag = await IngredientTagModel.find(tag)
-
                 // проверяем есть ли совпадения между темами ингредиента и темами тега и если есть создаем массив из них
+                // это нужно чтобы тег всегда имел тему
                 let themes = themesDb.filter(el => tag.themes.find(item => item.theme.toLowerCase() === el.theme.toLowerCase()))
                 // проверка на пустоту
                 if(themes.length) {
-                    // создаем тег в базе и пушим в переменную tagsDb
-                    tagsDb.push({tag: tag.tag, themes})
-                    // не загружаем если тег есть
-                    if(repeatTag.length) continue
-                    await IngredientTagModel.create({tag: tag.tag, themes})
+                    // проверка на пустоту
+                    if(tag.tag.trim() === '') continue
+                    // поиск похожего тега
+                    const repeatTag = await IngredientTagModel.find({tag: tag.tag})
+                    // если пусто создаем
+                    if(!repeatTag.length) {
+                        tagsDb.push(await IngredientTagModel.create({tag: tag.tag, themes}))
+                        continue
+                    }
+
+                    // если в теге нет темы то мы ее добавляем
+                    for(const el1 of tag.themes) {
+                        let flag = false
+                        for(const el2 of repeatTag[0].themes) {
+                            if(el1.theme === el2.theme) flag = true
+                        }
+                        if(!flag) await IngredientTagModel.updateOne({tag: tag.tag}, {$push: {themes: themesDb.find(el => el.theme === el1.theme)}})
+                    }
+
+                    tagsDb.push(repeatTag[0])
                 }
             }
         }
@@ -133,24 +152,37 @@ class IngredientService {
             // пробегаемся по названиям
             for(const title of titles) {
                 // проверяем есть ли совпадения между языками ингредиента и языками названий и если есть создаем массив из них
+                // это нужно что бы у названия всегда был язык
                 const country = countriesDb.filter(el => title.country.toLowerCase() === el.country.toLowerCase())
                 // проверка на пустоту
                 if(country.length) {
-                    // создаем название в базе и пушим в переменную titlesDb
-                    titlesDb.push(await IngredientTitleModel.create({title: title.title, country: title.country}))
+                    // проверка на пустоту
+                    if(title.title.trim() === '' || title.country.trim() === '') continue
+                    // поиск похожей темы
+                    const repeatTitle = await IngredientTitleModel.find(title)
+                    // проверка на пустоту и создание
+                    if(!repeatTitle.length) {
+                        titlesDb.push(await IngredientTitleModel.create(title))
+                        continue
+                    }
+                    // пушим
+                    titlesDb.push(repeatTitle[0])
                 }
             }
         }
 
+        let ingredient = null
         // создаем ингредиент
-        const ingredient = await IngredientModel.create({
-            countries: countriesDb,
-            themes: themesDb,
-            titles: titlesDb,
-            descriptions: descriptionsDb,
-            tags: tagsDb,
-            images: imagesDb
-        })
+        if(titles.length) {
+            ingredient = await IngredientModel.create({
+                countries: countriesDb,
+                themes: themesDb,
+                titles: titlesDb,
+                descriptions: descriptionsDb,
+                tags: tagsDb,
+                images: imagesDb
+            })
+        }
 
         return ingredient
     }
