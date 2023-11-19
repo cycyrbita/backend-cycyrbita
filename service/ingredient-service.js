@@ -1,6 +1,5 @@
 const sharp = require('sharp')
 let fs = require('fs')
-const PATH_INGREDIENTS = 'assets/ingredients'
 const IngredientModel = require('../models/ingredients/ingerdient-model')
 const IngredientDescriptionModel = require('../models/ingredients/ingerdient_description-model')
 const IngredientImageModel = require('../models/ingredients/ingerdient_image-model')
@@ -35,9 +34,9 @@ class IngredientService {
             const MIMETYPE = ['image/jpeg', 'image/jpg', 'image/svg+xml', 'image/png', 'image/webp']
 
             // проверяем есть ли папка
-            if (!fs.existsSync(PATH_INGREDIENTS)) {
+            if (!fs.existsSync(`${process.env.IMG_PATH}/ingredients`)) {
                 // если папки нет то создаем
-                fs.mkdirSync(PATH_INGREDIENTS, { recursive: true })
+                fs.mkdirSync(`${process.env.IMG_PATH}/ingredients`, { recursive: true })
             }
 
             // перебираем все файлы и запускаем sharp
@@ -61,7 +60,7 @@ class IngredientService {
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
 
                 // создаем картинку в базе и пушим в переменную imagesDb
-                imagesDb.push(await IngredientImageModel.create({src: `${process.env.IMG_PATH}/ingredients/${fileName}`, alt: 'Картинка'}))
+                imagesDb.push(await IngredientImageModel.create({src: fileName, alt: 'Картинка'}))
             }
         }
 
@@ -194,6 +193,10 @@ class IngredientService {
         options.tags = await IngredientTagModel.find()
 
         return options
+    }
+
+    async getIngredients() {
+        return IngredientModel.find()
     }
 }
 

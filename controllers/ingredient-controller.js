@@ -33,6 +33,14 @@ class IngredientController {
             next(e)
         }
     }
+
+    async getIngredients (req, res, next) {
+        try {
+            return res.json(await IngredientService.getIngredients())
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 module.exports = new IngredientController()
