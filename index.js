@@ -8,7 +8,7 @@ const errorMiddleware = require('./middleware/error-middleware')
 const fileUpload = require('express-fileupload')
 
 // порт нашего сервера
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 // инициализируем express
 const app = express()
 
