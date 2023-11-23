@@ -5,16 +5,13 @@ class IngredientController {
         try {
             let ingredientsImages = null
             // данные ингредиента
-            let ingredients = JSON.parse(req.body.ingredients)
+            const ingredients = JSON.parse(req.body.ingredients)
 
             // проверка на файлы
             if(req.files) ingredientsImages = req.files.ingredientsImages
 
             // если это не массив то делаем из него массив
             if(ingredientsImages && !Array.isArray(req.files.ingredientsImages)) ingredientsImages = [req.files.ingredientsImages]
-
-            // console.log(ingredients)
-            // console.log(ingredientsImages)
 
             // запускаем функцию создания ингредиента
             const ingredientData = await IngredientService.create(ingredientsImages, ingredients)
@@ -25,18 +22,12 @@ class IngredientController {
         }
     }
 
-    async getOptions (req, res, next) {
+    async getIngredients(req, res, next) {
         try {
-            const options = await IngredientService.getOptions()
-            return res.json(options)
-        } catch (e) {
-            next(e)
-        }
-    }
+            // получаем ингредиенты
+            const ingredients = await IngredientService.getIngredients()
 
-    async getIngredients (req, res, next) {
-        try {
-            return res.json(await IngredientService.getIngredients())
+            return res.json(ingredients)
         } catch (e) {
             next(e)
         }
