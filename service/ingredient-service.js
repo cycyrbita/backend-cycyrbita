@@ -1,6 +1,6 @@
 const sharp = require('sharp')
 let fs = require('fs')
-const IngredientModel = require('../models/ingredients/ingerdient-model')
+const IngredientModel = require('../models/ingerdient-model')
 
 class IngredientService {
     async create(ingredientsImages, ingredients) {
@@ -43,7 +43,13 @@ class IngredientService {
                 ingredients.images.push({src: fileName, alt: 'Картинка'})
             }
         }
-        return IngredientModel.create(ingredients)
+
+        const ingredientsData = await IngredientModel.create(ingredients)
+        return ingredientsData
+    }
+
+    async getIngredients() {
+        return IngredientModel.find()
     }
 }
 

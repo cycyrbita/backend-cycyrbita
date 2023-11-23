@@ -21,6 +21,17 @@ class IngredientController {
             next(e)
         }
     }
+
+    async getIngredients(req, res, next) {
+        try {
+            // получаем ингредиенты
+            const ingredients = await IngredientService.getIngredients()
+
+            return res.json(ingredients)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 module.exports = new IngredientController()
