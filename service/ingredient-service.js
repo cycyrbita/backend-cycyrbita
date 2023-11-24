@@ -44,8 +44,7 @@ class IngredientService {
             }
         }
 
-        const ingredientsData = await IngredientModel.create(ingredients)
-        return ingredientsData
+        return IngredientModel.create(ingredients)
     }
 
     async getIngredients() {
