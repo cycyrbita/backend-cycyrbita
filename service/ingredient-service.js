@@ -50,6 +50,10 @@ class IngredientService {
     async getIngredients() {
         return IngredientModel.find()
     }
+
+    async deletedIngredient() {
+        return IngredientModel.deleteOne()
+    }
 }
 
 module.exports = new IngredientService()

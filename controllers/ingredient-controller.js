@@ -32,6 +32,17 @@ class IngredientController {
             next(e)
         }
     }
+
+    async deletedIngredient(req, res, next) {
+        try {
+            // получаем ингредиенты
+            const ingredient = await IngredientService.deletedIngredient()
+
+            return res.json(ingredient)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 module.exports = new IngredientController()
