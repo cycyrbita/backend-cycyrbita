@@ -35,7 +35,6 @@ const start = async () => {
         await mongoose.connect(process.env.DB_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            dbName: process.env.DB_NAME,
         })
         // стартуем сервер
         app.listen(PORT, () => console.log(`Сервер запущен по адресу http://localhost:${PORT}`))
