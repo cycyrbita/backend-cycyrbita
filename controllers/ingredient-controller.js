@@ -35,8 +35,10 @@ class IngredientController {
 
     async deletedIngredient(req, res, next) {
         try {
+            const {id, images} = req.body
+
             // получаем ингредиенты
-            const ingredient = await IngredientService.deletedIngredient()
+            const ingredient = await IngredientService.deletedIngredient(id, images)
 
             return res.json(ingredient)
         } catch (e) {

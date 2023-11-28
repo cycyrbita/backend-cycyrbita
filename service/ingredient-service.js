@@ -51,8 +51,16 @@ class IngredientService {
         return IngredientModel.find()
     }
 
-    async deletedIngredient() {
-        return IngredientModel.deleteOne()
+    async deletedIngredient(id, images) {
+        // пробегаемся по файлам и удаляем
+        for(const img of images) {
+            fs.unlink(`${process.env.IMG_PATH}/ingredients/${img.src}`, err => {
+                if(err) throw err; // не удалось удалить файл
+                console.log('Файл успешно удалён')
+            })
+        }
+         // удаляем из базы
+        return IngredientModel.deleteOne({ _id: id })
     }
 }
 
