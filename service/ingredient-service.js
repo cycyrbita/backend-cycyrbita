@@ -57,7 +57,6 @@ class IngredientService {
             for(const img of images) {
                 fs.unlink(`${process.env.IMG_PATH}/ingredients/${img.src}`, err => {
                     if(err) return
-                    console.log('Файл успешно удалён');
                 })
             }
         }
