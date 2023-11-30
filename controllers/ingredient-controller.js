@@ -33,6 +33,18 @@ class IngredientController {
         }
     }
 
+    async getIngredient(req, res, next) {
+        try {
+            const {id} = req.body
+            // получаем ингредиенты
+            const ingredient = await IngredientService.getIngredient(id)
+
+            return res.json(ingredient)
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async deletedIngredient(req, res, next) {
         try {
             const {id, images} = req.body

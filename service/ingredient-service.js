@@ -51,6 +51,10 @@ class IngredientService {
         return IngredientModel.find()
     }
 
+    async getIngredient(id) {
+        return IngredientModel.findOne({ _id: id })
+    }
+
     async deletedIngredient(id, images) {
         // пробегаемся по файлам и удаляем
         if(images.length) {
