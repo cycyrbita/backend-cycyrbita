@@ -5,5 +5,6 @@ ingredients.post('/create', ingredientController.create)
 ingredients.post('/get-ingredients', ingredientController.getIngredients)
 ingredients.post('/get-ingredient', ingredientController.getIngredient)
 ingredients.delete('/deleted-ingredient', ingredientController.deletedIngredient)
+ingredients.post('/edit-ingredient', ingredientController.editIngredient)
 
 module.exports = ingredients
