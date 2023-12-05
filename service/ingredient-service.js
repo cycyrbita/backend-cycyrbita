@@ -119,8 +119,7 @@ class IngredientService {
                     }
                 })
             }
-        } else ingredient.images = oldIngredient.images
-
+        }
         return IngredientModel.replaceOne({ _id: ingredient._id }, ingredient)
     }
 }
