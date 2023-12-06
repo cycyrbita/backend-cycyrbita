@@ -5,7 +5,7 @@ class IngredientController {
         try {
             let ingredientsImages = null
             // данные ингредиента
-            const ingredients = JSON.parse(req.body.ingredients)
+            const ingredient = JSON.parse(req.body.ingredient)
 
             // проверка на файлы
             if(req.files) ingredientsImages = req.files.ingredientsImages
@@ -14,7 +14,7 @@ class IngredientController {
             if(ingredientsImages && !Array.isArray(req.files.ingredientsImages)) ingredientsImages = [req.files.ingredientsImages]
 
             // запускаем функцию создания ингредиента
-            const ingredientData = await IngredientService.create(ingredientsImages, ingredients)
+            const ingredientData = await IngredientService.create(ingredientsImages, ingredient)
 
             return res.json({ingredientData})
         } catch (e) {

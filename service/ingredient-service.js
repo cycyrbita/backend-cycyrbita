@@ -3,10 +3,10 @@ let fs = require('fs')
 const IngredientModel = require('../models/ingerdient-model')
 
 class IngredientService {
-    async create(ingredientsImages, ingredients) {
+    async create(ingredientsImages, ingredient) {
         // список файлов которые не прошли проверку
         let errorMimetype = []
-        ingredients.images = []
+        ingredient.images = []
 
         // проверка на файлы
         if(!!ingredientsImages) {
@@ -40,11 +40,11 @@ class IngredientService {
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
 
                 // создаем картинку в базе и пушим в переменную imagesDb
-                ingredients.images.push({src: fileName, alt: 'Картинка'})
+                ingredient.images.push({src: fileName, alt: 'Картинка'})
             }
         }
 
-        return IngredientModel.create(ingredients)
+        return IngredientModel.create(ingredient)
     }
 
     async getIngredients() {
