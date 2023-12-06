@@ -37,7 +37,10 @@ class IngredientService {
                 // загружаем файл
                 await sharp(el.data)
                     .toBuffer((err) => {if(err) console.log(err)})
-                    .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
+                    .png({ quality: 80 })
+                    .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {
+                        if(err) console.log(err)
+                    })
 
                 // создаем картинку в базе и пушим в переменную imagesDb
                 ingredient.images.push({src: fileName, alt: 'Картинка'})
