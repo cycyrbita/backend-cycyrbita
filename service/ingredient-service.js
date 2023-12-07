@@ -36,11 +36,10 @@ class IngredientService {
 
                 // загружаем файл
                 await sharp(el.data)
-                    .toBuffer((err) => {if(err) console.log(err)})
                     .png({ quality: 80 })
-                    .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {
-                        if(err) console.log(err)
-                    })
+                    .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`)
+                    .then(r => console.log('Загрузка завершена!'))
+                    .catch(e => console.log('Ошибка при загрузке'))
 
                 // создаем картинку в базе и пушим в переменную imagesDb
                 ingredient.images.push({src: fileName, alt: 'Картинка'})
@@ -107,8 +106,10 @@ class IngredientService {
 
                 // загружаем файл
                 await sharp(el.data)
-                    .toBuffer((err) => {if(err) console.log(err)})
-                    .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`, (err) => {if(err) console.log(err)})
+                    .png({ quality: 80 })
+                    .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`)
+                    .then(r => console.log('Загрузка завершена!'))
+                    .catch(e => console.log('Ошибка при загрузке'))
 
                 // создаем картинку в базе и пушим
                 ingredient.images.push({src: fileName, alt: 'Картинка'})
