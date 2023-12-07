@@ -49,8 +49,11 @@ class IngredientService {
         return IngredientModel.create(ingredient)
     }
 
-    async getIngredients() {
-        return IngredientModel.find()
+    async getIngredients(paginationCount, limit) {
+        const ingredientsLength = await IngredientModel.find().count()
+        const ingredients = await IngredientModel.find().skip(paginationCount).sort({_id: 1}).limit(limit)
+
+        return {ingredients, ingredientsLength}
     }
 
     async getIngredient(id) {
@@ -61,7 +64,7 @@ class IngredientService {
         // пробегаемся по файлам и удаляем
         if(images.length) {
             for(const img of images) {
-                fs.unlink(`${process.env.IMG_PATH}/ingredients/${img.src}`, err => {
+                fs.unlink(`${process.env.IMG_PATH}/ingredients/${img}`, err => {
                     if(err) return
                 })
             }
