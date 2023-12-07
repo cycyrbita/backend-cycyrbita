@@ -1,7 +1,7 @@
 const IngredientService = require("../service/ingredient-service")
 
 class IngredientController {
-    async create(req, res, next) {
+    async createIngredient(req, res, next) {
         try {
             let ingredientsImages = null
             // данные ингредиента
@@ -14,7 +14,7 @@ class IngredientController {
             if(ingredientsImages && !Array.isArray(req.files.ingredientsImages)) ingredientsImages = [req.files.ingredientsImages]
 
             // запускаем функцию создания ингредиента
-            const ingredientData = await IngredientService.create(ingredientsImages, ingredient)
+            const ingredientData = await IngredientService.createIngredient(ingredientsImages, ingredient)
 
             return res.json({ingredientData})
         } catch (e) {

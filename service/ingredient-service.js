@@ -3,7 +3,7 @@ let fs = require('fs')
 const IngredientModel = require('../models/ingerdient-model')
 
 class IngredientService {
-    async create(ingredientsImages, ingredient) {
+    async createIngredient(ingredientsImages, ingredient) {
         // список файлов которые не прошли проверку
         let errorMimetype = []
         ingredient.images = []
@@ -11,7 +11,7 @@ class IngredientService {
         // проверка на файлы
         if(!!ingredientsImages) {
             // указываем типы которые хотим принимать
-            const MIMETYPE = ['image/jpeg', 'image/jpg', 'image/svg+xml', 'image/png', 'image/webp']
+            const MIMETYPE = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
             // проверяем есть ли папка
             if (!fs.existsSync(`${process.env.IMG_PATH}/ingredients`)) {
@@ -29,20 +29,20 @@ class IngredientService {
 
                 // забираем формат
                 let format = el.mimetype.split('/')
-                if(format[1] === 'svg+xml') format[1] = 'svg'
 
                 // рандомное имя
                 let fileName = `ingredients-${Math.floor(Math.random() * 100)}-${Date.now()}.${format[1]}`
 
-                // загружаем файл
+                // // загружаем файл
                 await sharp(el.data)
-                    .png({ quality: 80 })
+                    .resize({ width: 800, withoutEnlargement: true })
+                    .toFormat(format[1], { quality: 60 })
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`)
                     .then(r => console.log('Загрузка завершена!'))
                     .catch(e => console.log('Ошибка при загрузке'))
 
                 // создаем картинку в базе и пушим в переменную imagesDb
-                ingredient.images.push({src: fileName, alt: 'Картинка'})
+                ingredient.images.push(fileName)
             }
         }
 
@@ -81,7 +81,7 @@ class IngredientService {
         // проверка на файлы
         if(!!ingredientsImages) {
             // указываем типы которые хотим принимать
-            const MIMETYPE = ['image/jpeg', 'image/jpg', 'image/svg+xml', 'image/png', 'image/webp']
+            const MIMETYPE = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
             // проверяем есть ли папка
             if (!fs.existsSync(`${process.env.IMG_PATH}/ingredients`)) {
@@ -99,20 +99,20 @@ class IngredientService {
 
                 // забираем формат
                 let format = el.mimetype.split('/')
-                if(format[1] === 'svg+xml') format[1] = 'svg'
 
                 // рандомное имя
                 let fileName = `ingredients-${Math.floor(Math.random() * 100)}-${Date.now()}.${format[1]}`
 
                 // загружаем файл
                 await sharp(el.data)
-                    .png({ quality: 80 })
+                    .resize({ width: 800, withoutEnlargement: true })
+                    .toFormat(format[1], { quality: 60 })
                     .toFile(`${process.env.IMG_PATH}/ingredients/${fileName}`)
                     .then(r => console.log('Загрузка завершена!'))
                     .catch(e => console.log('Ошибка при загрузке'))
 
                 // создаем картинку в базе и пушим
-                ingredient.images.push({src: fileName, alt: 'Картинка'})
+                ingredient.images.push(fileName)
 
                 // удаляем лишние картинки
                 oldIngredient.images.some(old => {
