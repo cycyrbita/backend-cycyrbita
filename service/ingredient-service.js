@@ -60,7 +60,7 @@ class IngredientService {
 
     async getIngredients(paginationCount, limit) {
         const ingredientsLength = await IngredientModel.find().count()
-        const ingredients = await IngredientModel.find().skip(paginationCount).sort({_id: 1}).limit(limit)
+        const ingredients = await IngredientModel.find().skip(paginationCount).sort({_id: -1}).limit(limit)
 
         return {ingredients, ingredientsLength}
     }
