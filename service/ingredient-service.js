@@ -1,8 +1,17 @@
 const sharp = require('sharp')
 let fs = require('fs')
 const IngredientModel = require('../models/ingerdient-model')
+const IngredientThemeModel = require('../models/ingerdient-theme-model')
 
 class IngredientService {
+    async getIngredientThemes() {
+        return IngredientThemeModel.find()
+    }
+
+    async createIngredientTheme(theme) {
+        return IngredientThemeModel.create(theme)
+    }
+
     async createIngredient(ingredientsImages, ingredient) {
         // список файлов которые не прошли проверку
         let errorMimetype = []

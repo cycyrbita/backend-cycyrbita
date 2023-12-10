@@ -1,6 +1,25 @@
 const IngredientService = require("../service/ingredient-service")
 
 class IngredientController {
+    async getIngredientThemes(req, res, next) {
+        try {
+            let themes = await IngredientService.getIngredientThemes()
+            return res.json(themes.map(el => ({theme: el.theme})))
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async createIngredientTheme(req, res, next) {
+        try {
+            const {theme} = req.body
+
+            return res.json(await IngredientService.createIngredientTheme({theme}))
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async createIngredient(req, res, next) {
         try {
             let ingredientsImages = null
