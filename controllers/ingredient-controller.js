@@ -43,10 +43,10 @@ class IngredientController {
 
     async getIngredients(req, res, next) {
         try {
-            const {paginationCount, limit} = req.body
+            const {paginationCount, limit, filterIngredients} = req.body
 
             // получаем ингредиенты
-            const {ingredients, ingredientsLength} = await IngredientService.getIngredients(paginationCount, limit)
+            const {ingredients, ingredientsLength} = await IngredientService.getIngredients(paginationCount, limit, filterIngredients)
 
             return res.json({ingredients, ingredientsLength})
         } catch (e) {
