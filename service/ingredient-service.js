@@ -61,7 +61,7 @@ class IngredientService {
     async getIngredients(paginationCount, limit, filterIngredients) {
         const ingredientsLength = await IngredientModel.find().count()
 
-        const ingredients = await IngredientModel.find({names: {$elemMatch: {name: filterIngredients.name}}}).skip(paginationCount).sort({_id: -1}).limit(limit)
+        const ingredients = await IngredientModel.find({'names.name': {$regex: filterIngredients.name}}).skip(paginationCount).sort({_id: -1}).limit(limit)
 
         return {ingredients, ingredientsLength}
     }
