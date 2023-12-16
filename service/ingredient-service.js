@@ -59,9 +59,17 @@ class IngredientService {
     }
 
     async getIngredients(paginationCount, limit, filterIngredients) {
-        const ingredientsLength = await IngredientModel.find({'names.name': {$regex: filterIngredients.name}}).count()
+        const ingredientsLength = await IngredientModel.find({
+            // 'themes.theme': {$in: filterIngredients.themes.map(el => el.theme)},
+            'themes.description': {$regex: filterIngredients.name, $options: 'i'},
+            'names.name': {$regex: filterIngredients.name, $options: 'i'},
+        }).count()
 
-        const ingredients = await IngredientModel.find({'names.name': {$regex: filterIngredients.name, $options: 'i' }}).skip(paginationCount).sort({_id: -1}).limit(limit)
+        const ingredients = await IngredientModel.find({
+            // 'themes.theme': {$in: filterIngredients.themes.map(el => el.theme)},
+            'themes.description': {$regex: filterIngredients.name, $options: 'i'},
+            'names.name': {$regex: filterIngredients.name, $options: 'i'},
+        }).skip(paginationCount).sort({_id: -1}).limit(limit)
 
         return {ingredients, ingredientsLength}
     }
