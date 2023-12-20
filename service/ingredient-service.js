@@ -60,23 +60,33 @@ class IngredientService {
 
     async getIngredients(paginationCount, limit, filterIngredients) {
         let filterThemes = filterIngredients.themes
-        if(!filterThemes.length) filterThemes = await IngredientThemeModel.find()
+        let ingredientsLength = null
+        let ingredients = null
+        if(!filterThemes.length) {
+            ingredientsLength = await IngredientModel.find({
+                'names.name': {$regex: filterIngredients.name, $options: 'i'},
+            }).count()
 
-        const ingredientsLength = await IngredientModel.find({
-            'themes.theme': {$in: filterThemes.map(el => el.theme)},
-            $or: [
-                {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
-                {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
-            ]
-        }).count()
+            ingredients = await IngredientModel.find({
+                'names.name': {$regex: filterIngredients.name, $options: 'i'},
+            }).skip(paginationCount).sort({_id: -1}).limit(limit)
+        } else {
+            ingredientsLength = await IngredientModel.find({
+                'themes.theme': {$in: filterThemes.map(el => el.theme)},
+                $or: [
+                    {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
+                    {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
+                ]
+            }).count()
 
-        const ingredients = await IngredientModel.find({
-            'themes.theme': {$in: filterThemes.map(el => el.theme)},
-            $or: [
-                {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
-                {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
-            ]
-        }).skip(paginationCount).sort({_id: -1}).limit(limit)
+            ingredients = await IngredientModel.find({
+                'themes.theme': {$in: filterThemes.map(el => el.theme)},
+                $or: [
+                    {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
+                    {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
+                ]
+            }).skip(paginationCount).sort({_id: -1}).limit(limit)
+        }
 
         return {ingredients, ingredientsLength}
     }
