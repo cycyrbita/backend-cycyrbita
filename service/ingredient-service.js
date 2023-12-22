@@ -64,11 +64,17 @@ class IngredientService {
         let ingredients = null
         if(!filterThemes.length) {
             ingredientsLength = await IngredientModel.find({
-                'names.name': {$regex: filterIngredients.name, $options: 'i'},
+                $or: [
+                    {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
+                    {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
+                ]
             }).count()
 
             ingredients = await IngredientModel.find({
-                'names.name': {$regex: filterIngredients.name, $options: 'i'},
+                $or: [
+                    {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
+                    {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
+                ]
             }).skip(paginationCount).sort({_id: -1}).limit(limit)
         } else {
             ingredientsLength = await IngredientModel.find({
