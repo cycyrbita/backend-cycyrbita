@@ -59,10 +59,10 @@ class IngredientService {
     }
 
     async getIngredients(paginationCount, limit, filterIngredients) {
-        let filterThemes = filterIngredients.themes
+        let filterThemes = filterIngredients.theme
         let ingredientsLength = null
         let ingredients = null
-        if(!filterThemes.length) {
+        if(!filterThemes) {
             ingredientsLength = await IngredientModel.find({
                 $or: [
                     {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
@@ -78,7 +78,7 @@ class IngredientService {
             }).skip(paginationCount).sort({_id: -1}).limit(limit)
         } else {
             ingredientsLength = await IngredientModel.find({
-                'themes.theme': {$in: filterThemes.map(el => el.theme)},
+                'themes.theme': filterThemes,
                 $or: [
                     {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
                     {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
@@ -86,7 +86,7 @@ class IngredientService {
             }).count()
 
             ingredients = await IngredientModel.find({
-                'themes.theme': {$in: filterThemes.map(el => el.theme)},
+                'themes.theme': filterThemes,
                 $or: [
                     {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
                     {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
