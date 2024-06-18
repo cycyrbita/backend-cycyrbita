@@ -6,9 +6,12 @@ const mongoose = require('mongoose')
 const router = require('./router/index')
 const errorMiddleware = require('./middleware/error-middleware')
 const fileUpload = require('express-fileupload')
+const { createServer } = require('http')
+const { Server } = require('socket.io')
 
 // порт нашего сервера
 const PORT = process.env.PORT || 5001
+
 // инициализируем express
 const app = express()
 
@@ -28,6 +31,24 @@ app.use('/api', router)
 // обработка ошибок
 app.use(errorMiddleware)
 
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+    cors: {
+        origins: [process.env.CLIENT_URL]
+    }
+})
+
+io.on('connection', (socket) => {
+    console.log('Подключились к сокету')
+    socket.on('disconnect', () => {
+        console.log('Отключились от сокета')
+    })
+
+    socket.on('chat message', (msg) => {
+        console.log(msg)
+    });
+})
+
 // функция запуска сервера
 const start = async () => {
     try {
@@ -37,7 +58,7 @@ const start = async () => {
             useUnifiedTopology: true,
         })
         // стартуем сервер
-        app.listen(PORT, () => console.log(`Сервер запущен по адресу http://localhost:${PORT}`))
+        httpServer.listen(PORT, () => console.log(`Сервер запущен по адресу http://localhost:${PORT}`))
     } catch (e) {
         console.log(e)
     }
