@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' })
 const sharp = require('sharp')
 let fs = require('fs')
 const IngredientModel = require('../models/ingerdient-model')

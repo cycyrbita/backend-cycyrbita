@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' })
 const userService = require('../service/user-service')
 const {validationResult} = require('express-validator')
 const ApiError = require('../exceptions/api-error')

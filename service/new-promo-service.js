@@ -6,5 +6,3 @@ class NewPromoService {
         return promo
     }
 }
-
-module.exports = new NewPromoService()
