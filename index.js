@@ -27,7 +27,7 @@ app.use(cors({
 // работа с файлами
 app.use(fileUpload())
 // роуты
-app.use('/api', router)
+app.use('/', router)
 // обработка ошибок
 app.use(errorMiddleware)
 

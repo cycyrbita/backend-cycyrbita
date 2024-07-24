@@ -4,7 +4,7 @@ const tokenService = require('../service/token-service')
 module.exports = function (req, res, next) {
     try {
         // достаем токен из заголовка
-        const authorizationHeader = req.headers.authorization
+        const authorizationHeader = req.cookies.accessToken
 
         // проверяем есть ли токен
         if(!authorizationHeader) return next(ApiError.UnauthorizedError())
