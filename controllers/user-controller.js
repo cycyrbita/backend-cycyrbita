@@ -50,13 +50,13 @@ class UserController {
             // получаем рефрештокен из кук
             const {refreshToken, accessToken} = req.cookies
             // вызываем функцию и передаем рефрештокен
-            const token = await userService.logout(refreshToken, accessToken)
+            await userService.logout(refreshToken, accessToken)
 
             // удаляем куку с рефрештокеном
             res.clearCookie('refreshToken')
             res.clearCookie('accessToken')
+            return res.json()
 
-            return res.json(token)
         } catch (e) {
             next(e)
         }
