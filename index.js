@@ -8,6 +8,7 @@ const errorMiddleware = require('./middleware/error-middleware')
 const fileUpload = require('express-fileupload')
 const { createServer } = require('http')
 const { Server } = require('socket.io')
+const authMiddleware = require('./middleware/auth-middleware')
 
 // порт нашего сервера
 const PORT = process.env.PORT || 5001
@@ -27,9 +28,11 @@ app.use(cors({
 // работа с файлами
 app.use(fileUpload())
 // роуты
-app.use('/', router)
+app.use('/api/', router)
 // обработка ошибок
 app.use(errorMiddleware)
+//отдаем статику промо
+app.use('/new_promo', [authMiddleware, express.static('../new_promo/')])
 
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
