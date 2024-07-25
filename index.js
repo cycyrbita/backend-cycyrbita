@@ -32,7 +32,7 @@ app.use('/api/', router)
 // обработка ошибок
 app.use(errorMiddleware)
 //отдаем статику промо
-app.use('/new_promo', [authMiddleware, express.static('../new_promo/')])
+app.use('/new_promo', [authMiddleware, express.static(process.env.PROMO_PATH)])
 
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
