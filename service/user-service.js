@@ -87,9 +87,7 @@ class UserService {
 
     async logout(refreshToken) {
         // вызываем функцию удаления токена с базы
-        const token = await tokenService.removeToken(refreshToken)
-        
-        return token
+        return await tokenService.removeToken(refreshToken)
     }
 
     async refresh(refreshToken) {
