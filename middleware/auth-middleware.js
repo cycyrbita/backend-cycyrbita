@@ -2,7 +2,6 @@ const ApiError = require('../exceptions/api-error')
 const tokenService = require('../service/token-service')
 
 module.exports = function (req, res, next) {
-    console.log('lal')
     try {
         // достаем токен из заголовка
         const authorizationHeader = req.cookies.accessToken
