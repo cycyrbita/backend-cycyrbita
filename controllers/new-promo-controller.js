@@ -6,7 +6,7 @@ class NewPromoController {
         try {
             // получаем промо
             const promo = await NewPromoService.getNewPromo()
-            return res.json(promo)
+            return res.json(promo.reverse())
         } catch (e) {
             next(e)
         }
