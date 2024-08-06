@@ -4,15 +4,9 @@ const tokenService = require('../service/token-service')
 module.exports = function (req, res, next) {
     try {
         // достаем токен из заголовка
-        const authorizationHeader = req.headers.authorization
+        const accessToken = req.cookies.accessToken
 
         // проверяем есть ли токен
-        if(!authorizationHeader) return next(ApiError.UnauthorizedError())
-
-        // из токена забираем токен а "Bearer" отсеиваем
-        const accessToken = authorizationHeader.split(' ')[1]
-
-        // проверяем есть ли токен уже без "Bearer"
         if(!accessToken) return next(ApiError.UnauthorizedError())
 
         // запускаем функцию проверки токена
@@ -23,7 +17,7 @@ module.exports = function (req, res, next) {
 
         // помещаем в поле user данные о пользователе который лежал в токене
         req.user = userData
-        
+
         // передаем управление следующему middleware
         next()
     } catch (e) {

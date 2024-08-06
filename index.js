@@ -39,13 +39,13 @@ const io = new Server(httpServer, {
 })
 
 io.on('connection', (socket) => {
-    console.log('Подключились к сокету')
+    // console.log('Подключились к сокету')
     socket.on('disconnect', () => {
-        console.log('Отключились от сокета')
+        // console.log('Отключились от сокета')
     })
 
     socket.on('chat message', (msg) => {
-        console.log(msg)
+        // console.log(msg)
     });
 })
 

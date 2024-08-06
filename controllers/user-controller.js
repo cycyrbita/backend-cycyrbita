@@ -17,6 +17,7 @@ class UserController {
             const userData = await userService.registration(email, password, firstName)
 
             // записываем в куки
+            res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
@@ -34,6 +35,7 @@ class UserController {
             const userData = await userService.login(email, password)
 
             // записываем в куки токен
+            res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
@@ -51,6 +53,7 @@ class UserController {
             const token = await userService.logout(refreshToken)
 
             // удаляем куку с рефрештокеном
+            res.clearCookie('accessToken')
             res.clearCookie('refreshToken')
 
             return res.json(token)
@@ -81,6 +84,7 @@ class UserController {
             const userData = await userService.refresh(refreshToken)
 
             // записываем в куки токен
+            res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})

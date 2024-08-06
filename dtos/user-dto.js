@@ -6,7 +6,8 @@ module.exports = class UserDto {
     age;
     avatarImg;
     email;
-    role;
+    roles;
+    permissions;
     isActivated;
     isRecoveryPassword;
     edits;
@@ -21,7 +22,8 @@ module.exports = class UserDto {
         this.age = model.age;
         this.avatarImg = model.avatarImg;
         this.email = model.email;
-        this.role = model.role;
+        this.roles = model.roles;
+        this.permissions = model.permissions;
         this.isActivated = model.isActivated;
         this.isRecoveryPassword = model.isRecoveryPassword;
         this.edits = model.edits;
