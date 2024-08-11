@@ -93,6 +93,16 @@ class UserController {
         }
     }
 
+    async getUser(req, res, next) {
+        try {
+            // получаем почту
+            const { email } = req.body
+            return res.json(await userService.getUser(email))
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async getUsers(req, res, next) {
         try {
             const users = await userService.getUsers()

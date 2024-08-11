@@ -110,12 +110,20 @@ class UserService {
         // фильтруем объект и отдаем только те данные которые прописаны в dto
         const userDto = new UserDto(user)
 
+        if(userDto.accountDeleted) throw ApiError.UnauthorizedError()
+
         // генерируем токены
         const tokens = tokenService.generateTokens({...userDto})
 
         // сохраняем токены в базу
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
         return {...tokens, user: userDto}
+    }
+
+    async getUser(email) {
+        const user = await UserModel.findOne({email})
+        if(user.accountDeleted) throw ApiError.UnauthorizedError()
+        return user
     }
 
     async getUsers() {

@@ -1,7 +1,8 @@
 const ApiError = require('../exceptions/api-error')
 const tokenService = require('../service/token-service')
+const UserModel = require('../models/user-model')
 
-module.exports = function (req, res, next, data = []) {
+module.exports = async function (req, res, next, data = []) {
     try {
         // достаем токен из заголовка
         const accessToken = req.cookies.accessToken
@@ -10,16 +11,19 @@ module.exports = function (req, res, next, data = []) {
         if(!accessToken) return next(ApiError.UnauthorizedError())
 
         // запускаем функцию проверки токена
-        const user = tokenService.validateAccessToken(accessToken)
-
-        // если при валидации токена произошла ошибка
-        if(!user) return next(ApiError.UnauthorizedError())
+        let user = tokenService.validateAccessToken(accessToken)
 
         // проверяем есть ли в объекте ключи
         if(!Object.keys(user).length) return next(ApiError.BadRequest('Не передали пользователя'))
 
+        // достаем пользователя по id из базы
+        user = await UserModel.findOne({email: user.email})
+
+        // проверка на существования в базе пользователя
+        if(!user) return next(ApiError.BadRequest(`Пользователь с почтовым адресом ${user.email} не найден`))
+
         // сравниваем массивы у пользователя и у массива data, если нет совпадений то выходим
-        if (!user?.permissions?.some(el => data.includes(el.name))) return next(ApiError.Forbidden('Нет доступа'))
+        if (!user?.permissions?.some(el => data.includes(el.name))) return next(ApiError.Forbidden())
 
         next()
     } catch (e) {

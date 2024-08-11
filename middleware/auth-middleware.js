@@ -15,6 +15,9 @@ module.exports = function (req, res, next) {
         // если при валидации токена произошла ошибка
         if(!userData) return next(ApiError.UnauthorizedError())
 
+        // если пользователь заблокирован
+        if(userData.accountDeleted) return next(ApiError.UnauthorizedError())
+
         // помещаем в поле user данные о пользователе который лежал в токене
         req.user = userData
 

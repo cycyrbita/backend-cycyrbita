@@ -21,6 +21,7 @@ user.post('/recovery-password', body('password').isLength({min: 8, max: 32}), us
 user.get('/activate/:link', userController.activate)
 
 // список пользователей
+user.post('/user', authMiddleware, userController.getUser)
 user.post('/users', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.getUsers)
 user.delete('/delete-user', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.deleteUser)
 user.post('/restore-user', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.restoreUser)

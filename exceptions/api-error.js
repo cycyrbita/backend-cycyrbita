@@ -16,7 +16,7 @@ module.exports = class ApiError extends Error {
         return new ApiError(400, message, errors)
     }
 
-    static Forbidden(message, errors = []) {
-        return new ApiError(403, message, errors)
+    static Forbidden(errors = []) {
+        return new ApiError(403, 'Нет доступа', errors)
     }
 }
