@@ -17,7 +17,7 @@ class UserController {
             const userData = await userService.registration(email, password, firstName)
 
             // записываем в куки
-            res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            res.cookie('accessToken', userData.accessToken, {maxAge: 60000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
