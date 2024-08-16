@@ -110,6 +110,7 @@ class UserService {
         // фильтруем объект и отдаем только те данные которые прописаны в dto
         const userDto = new UserDto(user)
 
+        // проверка на удаление аккаунта
         if(userDto.accountDeleted) throw ApiError.UnauthorizedError()
 
         // генерируем токены
@@ -117,6 +118,7 @@ class UserService {
 
         // сохраняем токены в базу
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
         return {...tokens, user: userDto}
     }
 
@@ -169,23 +171,6 @@ class UserService {
         user.save()
 
         return
-    }
-
-    async editRole(id, editRole) {
-        // достаем по id
-        const user = await UserModel.findById(id)
-
-        // меняем роль
-        user.role = editRole
-
-        // сохраняем
-        await user.save()
-
-        // фильтруем объект и отдаем только те данные которые прописаны в dto
-        const userDto = new UserDto(user)
-
-        // возвращаем пользователя
-        return userDto
     }
 
     // функция отправки письма на почту для восстановления пароля

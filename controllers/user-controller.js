@@ -145,16 +145,6 @@ class UserController {
         }
     }
 
-    async editRole(req, res, next) {
-        try {
-            const {id, editRole} = req.body
-            const newRole = await userService.editRole(id, editRole)
-            return res.json(newRole)
-        } catch (e) {
-            next(e)
-        }
-    }
-
     // функция отправки письма на почту для восстановления пароля
     async addRecoveryPasswordLink(req, res, next) {
         try {
