@@ -128,6 +128,10 @@ class UserService {
         return user
     }
 
+    async updateUser(user) {
+        return await UserModel.findOneAndUpdate({ _id: user._id }, user, { upsert: true, new: true })
+    }
+
     async getUsers() {
         const users = await UserModel.find()
         return users
@@ -147,30 +151,6 @@ class UserService {
         user.save()
 
         return newData
-    }
-
-    async deleteUser(id) {
-        const user = await UserModel.findById(id)
-
-        // удаляем пользователя(просто меняем флаг)
-        user.accountDeleted = true
-
-        // сохраняем
-        user.save()
-
-        return
-    }
-
-    async restoreUser(id) {
-        const user = await UserModel.findById(id)
-
-        // восстанавливаем пользователя(просто меняем флаг)
-        user.accountDeleted = false
-
-        // сохраняем
-        user.save()
-
-        return
     }
 
     // функция отправки письма на почту для восстановления пароля

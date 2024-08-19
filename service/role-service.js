@@ -21,6 +21,10 @@ class roleService {
         }
         return await PermissionModel.findOneAndUpdate({ name: permission.name }, permission, { upsert: true, new: true })
     }
+
+    async deletePermission({_id}) {
+        await PermissionModel.deleteOne({ _id })
+    }
 }
 
 module.exports = new roleService()

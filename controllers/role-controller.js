@@ -1,4 +1,6 @@
 const roleService = require('../service/role-service')
+const {validationResult} = require('express-validator')
+const ApiError = require('../exceptions/api-error')
 
 class RoleController {
     async getRoles(req, res, next) {
@@ -29,9 +31,19 @@ class RoleController {
 
     async setPermission(req, res, next) {
         try {
-            const permission = req.body
+            // проверка на ошибки
+            const errors = validationResult(req)
+            if(!errors.isEmpty()) return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
 
-            return res.json(await roleService.setPermission(permission))
+            return res.json(await roleService.setPermission(req.body))
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async deletePermission(req, res, next) {
+        try {
+            return res.json(await roleService.deletePermission(req.body))
         } catch (e) {
             next(e)
         }

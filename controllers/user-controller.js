@@ -103,6 +103,14 @@ class UserController {
         }
     }
 
+    async updateUser(req, res, next) {
+        try {
+            return res.json(await userService.updateUser(req.body))
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async getUsers(req, res, next) {
         try {
             const users = await userService.getUsers()
@@ -120,26 +128,6 @@ class UserController {
             const newData = await userService.lastActivityAt(email)
 
             return res.json({message: `Дата последнего входа ${newData}`})
-        } catch (e) {
-            next(e)
-        }
-    }
-
-    async deleteUser(req, res, next) {
-        try {
-            const {email, id} = req.body
-            await userService.deleteUser(id)
-            return res.json({message: `Пользователь с почтой ${email} был удален`})
-        } catch (e) {
-            next(e)
-        }
-    }
-
-    async restoreUser(req, res, next) {
-        try {
-            const {email, id} = req.body
-            await userService.restoreUser(id)
-            return res.json({message: `Пользователь с почтой ${email} восстановлен`})
         } catch (e) {
             next(e)
         }
