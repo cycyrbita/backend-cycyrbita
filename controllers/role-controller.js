@@ -13,9 +13,19 @@ class RoleController {
 
     async setRole(req, res, next) {
         try {
-            const role = req.body
+            // проверка на ошибки
+            const errors = validationResult(req)
+            if(!errors.isEmpty()) return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
 
-            return res.json(await roleService.setRole(role))
+            return res.json(await roleService.setRole(req.body))
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async deleteRole(req, res, next) {
+        try {
+            return res.json(await roleService.deleteRole(req.body))
         } catch (e) {
             next(e)
         }

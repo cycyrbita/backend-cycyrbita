@@ -5,6 +5,7 @@ const mailService = require('./mail-service')
 const tokenService = require('./token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../exceptions/api-error')
+const PermissionModel = require("../models/permission-model");
 
 class UserService {
     async registration(email, password, firstName) {
@@ -128,13 +129,19 @@ class UserService {
         return user
     }
 
-    async updateUser(user) {
-        return await UserModel.findOneAndUpdate({ _id: user._id }, user, { upsert: true, new: true })
+    async getUsers() {
+        return await UserModel.find()
     }
 
-    async getUsers() {
-        const users = await UserModel.find()
-        return users
+    async updateUser(user) {
+        return await UserModel.findOneAndUpdate({ _id: user._id }, user)
+    }
+
+    async deleteUser({_id}) {
+        const user = await UserModel.findOne({ _id })
+        user.accountDeleted = true
+        user.save()
+        return user
     }
 
     async lastActivityAt(email) {

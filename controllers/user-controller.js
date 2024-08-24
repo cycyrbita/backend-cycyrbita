@@ -103,6 +103,14 @@ class UserController {
         }
     }
 
+    async getUsers(req, res, next) {
+        try {
+            return res.json(await userService.getUsers())
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async updateUser(req, res, next) {
         try {
             return res.json(await userService.updateUser(req.body))
@@ -111,10 +119,9 @@ class UserController {
         }
     }
 
-    async getUsers(req, res, next) {
+    async deleteUser(req, res, next) {
         try {
-            const users = await userService.getUsers()
-            return res.json(users)
+            return res.json(await userService.deleteUser(req.body))
         } catch (e) {
             next(e)
         }

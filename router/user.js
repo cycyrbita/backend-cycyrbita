@@ -22,8 +22,8 @@ user.get('/activate/:link', userController.activate)
 
 // пользователи
 user.post('/user', authMiddleware, userController.getUser)
-
-user.post('/user-update', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.updateUser)
 user.get('/users', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.getUsers)
+user.post('/update-user', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.updateUser)
+user.post('/delete-user', authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['users']), userController.deleteUser)
 
 module.exports = user
