@@ -5,7 +5,6 @@ const mailService = require('./mail-service')
 const tokenService = require('./token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../exceptions/api-error')
-const PermissionModel = require("../models/permission-model");
 
 class UserService {
     async registration(email, password, firstName) {
@@ -134,6 +133,12 @@ class UserService {
     }
 
     async updateUser(user) {
+        // хешируем пароль
+        if(user.newPassword) {
+            user.password = await bcrypt.hash(user.newPassword, 3)
+            delete user.newPassword
+            console.log(user)
+        }
         return await UserModel.findOneAndUpdate({ _id: user._id }, user)
     }
 
