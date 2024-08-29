@@ -1,15 +1,21 @@
-const NewPromoService = require('../service/new-promo-api-service')
+require('dotenv').config({ path: '../.env' })
+const NewPromoService = require('../service/new-promo-service')
 const fs = require("fs");
 const archiver = require("archiver");
 const path = require('path')
+const unzipper = require('unzipper')
+const newPromoDb = require('../models/new-promo-model')
+const dbTitle = require("../models/new-promo-title-model");
 
 class NewPromoController {
 
   async getNewPromo(req, res, next) {
     try {
       // получаем промо
-      const promo = await NewPromoService.getNewPromo()
-      return res.json(promo.reverse())
+      const bd = await NewPromoService.getNewPromo()
+      const promo = bd.promo.reverse()
+      const promoTitle = bd.promoTitle.reverse()
+      return res.json({ promo, promoTitle })
     }
     catch (e) {
       next(e)
@@ -32,11 +38,33 @@ class NewPromoController {
     }
   }
 
+  async uploadNewPromo(req, res, next) {
+    try {
+      const bufferStream = require('stream').Readable.from(req.files.archive.data);
+      const targetPath = path.join(process.env.ROOT_PROMO_PATH, req.body.title)
+      if (!fs.existsSync(targetPath)) {
+        fs.mkdirSync(targetPath)
+      }
+      bufferStream.pipe(unzipper.Extract({ path: targetPath }))
+        .on('error', (err) => {
+          console.error('Ошибка при разархивировании:', err);
+          res.status(500).send('Произошла ошибка при разархивировании файла.');
+        })
+        .on('close', async () => {
+          await NewPromoService.createOrUpdateNewPromo(req)
+          await NewPromoService.getScreenShot(req, targetPath)
+          res.status(200).send('Файл разархивирован')
+        });
+    }
+    catch (e) {
+      next(e)
+    }
+  }
+
   async deleteNewPromo(req, res, next) {
     try {
-      const { id } = req.body
-      const promo = await NewPromoService.deleteNewPromo(id)
-      return res.json(promo)
+      await NewPromoService.deleteNewPromo(req)
+      res.sendStatus(200)
     }
     catch (e) {
       next(e)
