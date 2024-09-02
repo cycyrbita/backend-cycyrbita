@@ -123,13 +123,23 @@ class UserService {
     }
 
     async getUser(email) {
-        const user = await UserModel.findOne({email})
+        const user = await UserModel.findOne({email}).populate({
+            path: 'roles',
+            populate: {
+                path: 'permissions'
+            }
+        }).populate('permissions')
         if(user.accountDeleted) throw ApiError.UnauthorizedError()
         return user
     }
 
     async getUsers() {
-        return await UserModel.find()
+        return await UserModel.find().populate({
+            path: 'roles',
+            populate: {
+                path: 'permissions'
+            }
+        }).populate('permissions')
     }
 
     async updateUser(user) {
@@ -137,9 +147,13 @@ class UserService {
         if(user.newPassword) {
             user.password = await bcrypt.hash(user.newPassword, 3)
             delete user.newPassword
-            console.log(user)
         }
-        return await UserModel.findOneAndUpdate({ _id: user._id }, user)
+        return await UserModel.findOneAndUpdate({ _id: user._id }, user).populate({
+            path: 'roles',
+            populate: {
+                path: 'permissions'
+            }
+        }).populate('permissions')
     }
 
     async deleteUser({_id}) {

@@ -8,8 +8,8 @@ const UserSchema = new Schema({
     avatarImg: {type: String, default: "avatar-default.png"},                    // Аватарка
     email: {type: String, unique: true, require: true},                          // Почта
     password: {type: String, require: true},                                     // Пароль
-    roles: {type: Array, default: []},
-    permissions: {type: Array, default: []},
+    roles: [{type: Schema.Types.ObjectId, ref: 'Role'}],
+    permissions: [{type: Schema.Types.ObjectId, ref: 'Permission'}],
     isActivated: {type: Boolean, default: false},                                // Активация аккаунта через почту
     activationLink: {type: String},                                              // Ссылка которая приходит на почту для активации
     isRecoveryPassword: {type: Boolean, default: false},                         // Если нужно сменить пароль

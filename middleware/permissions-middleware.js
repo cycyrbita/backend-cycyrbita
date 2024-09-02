@@ -16,8 +16,13 @@ module.exports = async function (req, res, next, data = []) {
         // проверяем есть ли в объекте ключи
         if(!Object.keys(user).length) return next(ApiError.BadRequest('Не передали пользователя'))
 
-        // достаем пользователя по id из базы
-        user = await UserModel.findOne({email: user.email})
+        // достаем пользователя по email из базы
+        user = await UserModel.findOne({email: user.email}).populate({
+            path: 'roles',
+            populate: {
+                path: 'permissions'
+            }
+        }).populate('permissions')
 
         // проверка на существования в базе пользователя
         if(!user) return next(ApiError.BadRequest(`Пользователь с почтовым адресом ${user.email} не найден`))
