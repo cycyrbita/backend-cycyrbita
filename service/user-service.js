@@ -87,7 +87,7 @@ class UserService {
     async logout(refreshToken) {
         // вызываем функцию удаления токена с базы
         const token = await tokenService.removeToken(refreshToken)
-        
+
         return token
     }
 
@@ -157,10 +157,7 @@ class UserService {
     }
 
     async deleteUser({_id}) {
-        const user = await UserModel.findOne({ _id })
-        user.accountDeleted = true
-        user.save()
-        return user
+        return await UserModel.deleteOne({ _id })
     }
 
     async lastActivityAt(email) {

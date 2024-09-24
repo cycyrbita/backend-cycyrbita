@@ -8,9 +8,9 @@ class roleService {
     }
     async setRole(role) {
         if(role._id) {
-            await RoleModel.findOneAndUpdate({ _id: role._id }, role, { upsert: true, new: true })
+            const deleteRole = await RoleModel.findOneAndUpdate({ _id: role._id }, role, { upsert: true, new: true })
 
-            // смысл в том, чтобы при удалении роли, так же удалялись доступы данной роли у пользователей
+            // смысл в том, чтобы при обновлении роли, так же удалялись доступы данной роли у пользователей
             let users = await UserModel.find().populate('roles')
             for(const user of users) {
                 let permissions = []
@@ -24,8 +24,9 @@ class roleService {
                 }
                 await user.save()
             }
+            return {...deleteRole, ...{statusInfo: 'update'}}
         }
-        return await RoleModel.findOneAndUpdate({ name: role.name }, role, { upsert: true, new: true })
+        return {...await RoleModel.findOneAndUpdate({name: role.name}, role, {upsert: true, new: true}), ...{statusInfo: 'create'}}
     }
 
     async deleteRole({_id}) {
@@ -59,8 +60,10 @@ class roleService {
     }
 
     async setPermission(permission) {
-        if(permission._id) return await PermissionModel.findOneAndUpdate({ _id: permission._id }, permission, { upsert: true, new: true })
-        return await PermissionModel.findOneAndUpdate({ name: permission.name }, permission, { upsert: true, new: true })
+        if(permission._id) {
+            return {...await PermissionModel.findOneAndUpdate({ _id: permission._id }, permission, { upsert: true, new: true }), ...{statusInfo: 'update'}}
+        }
+        return {...await PermissionModel.findOneAndUpdate({ name: permission.name }, permission, { upsert: true, new: true }), ...{statusInfo: 'create'}}
     }
 
     async deletePermission({_id}) {
