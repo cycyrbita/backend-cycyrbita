@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' })
 const userService = require('../service/user-service')
 const {validationResult} = require('express-validator')
 const ApiError = require('../exceptions/api-error')
@@ -19,6 +20,7 @@ class UserController {
             // записываем в куки
             res.cookie('accessToken', userData.accessToken, {maxAge: 60000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            res.cookie('accessToken', `Bearer ${userData.accessToken}`, {maxAge:  30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
@@ -37,6 +39,7 @@ class UserController {
             // записываем в куки токен
             res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            res.cookie('accessToken', `Bearer ${userData.accessToken}`, {maxAge:  30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
@@ -47,16 +50,16 @@ class UserController {
     async logout(req, res, next) {
         try {
             // получаем рефрештокен из кук
-            const {refreshToken} = req.cookies
-
+            const {refreshToken, accessToken} = req.cookies
             // вызываем функцию и передаем рефрештокен
-            const token = await userService.logout(refreshToken)
+            await userService.logout(refreshToken, accessToken)
 
             // удаляем куку с рефрештокеном
             res.clearCookie('accessToken')
             res.clearCookie('refreshToken')
+            res.clearCookie('accessToken')
+            return res.json()
 
-            return res.json(token)
         } catch (e) {
             next(e)
         }
@@ -86,6 +89,7 @@ class UserController {
             // записываем в куки токен
             res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            res.cookie('accessToken', `Bearer ${userData.accessToken}`, {maxAge:  30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
