@@ -4,25 +4,23 @@ const tokenService = require('../service/token-service')
 module.exports = function (req, res, next) {
     try {
         // достаем токен из заголовка
-        const authorizationHeader = req.cookies.accessToken
+        const accessToken = req.cookies.accessToken
 
         // проверяем есть ли токен
-        if(!authorizationHeader) return next(res.redirect(process.env.CLIENT_URL))
-
-        // из токена забираем токен а "Bearer" отсеиваем
-        const accessToken = authorizationHeader.split(' ')[1]
-        // проверяем есть ли токен уже без "Bearer"
-        if(!accessToken) return next(res.redirect(process.env.CLIENT_URL))
+        if(!accessToken) return next(ApiError.UnauthorizedError())
 
         // запускаем функцию проверки токена
         const userData = tokenService.validateAccessToken(accessToken)
 
         // если при валидации токена произошла ошибка
-        if(!userData) return next(res.redirect(process.env.CLIENT_URL))
+        if(!userData) return next(ApiError.UnauthorizedError())
+
+        // если пользователь заблокирован
+        if(userData.accountDeleted) return next(ApiError.UnauthorizedError())
 
         // помещаем в поле user данные о пользователе который лежал в токене
         req.user = userData
-        
+
         // передаем управление следующему middleware
         next()
     } catch (e) {

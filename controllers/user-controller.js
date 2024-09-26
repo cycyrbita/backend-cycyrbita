@@ -18,8 +18,8 @@ class UserController {
             const userData = await userService.registration(email, password, firstName)
 
             // записываем в куки
+            res.cookie('accessToken', userData.accessToken, {maxAge: 60000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-            res.cookie('accessToken', `Bearer ${userData.accessToken}`, {maxAge:  30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
@@ -36,8 +36,8 @@ class UserController {
             const userData = await userService.login(email, password)
 
             // записываем в куки токен
+            res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-            res.cookie('accessToken', `Bearer ${userData.accessToken}`, {maxAge:  30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
@@ -53,6 +53,7 @@ class UserController {
             await userService.logout(refreshToken, accessToken)
 
             // удаляем куку с рефрештокеном
+            res.clearCookie('accessToken')
             res.clearCookie('refreshToken')
             res.clearCookie('accessToken')
             return res.json()
@@ -84,8 +85,8 @@ class UserController {
             const userData = await userService.refresh(refreshToken)
 
             // записываем в куки токен
+            res.cookie('accessToken', userData.accessToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-            res.cookie('accessToken', `Bearer ${userData.accessToken}`, {maxAge:  30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json({accessToken: userData.accessToken, user: userData.user})
         } catch (e) {
@@ -93,10 +94,35 @@ class UserController {
         }
     }
 
+    async getUser(req, res, next) {
+        try {
+            // получаем почту
+            const { email } = req.body
+            return res.json(await userService.getUser(email))
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async getUsers(req, res, next) {
         try {
-            const users = await userService.getUsers()
-            return res.json(users)
+            return res.json(await userService.getUsers())
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async updateUser(req, res, next) {
+        try {
+            return res.json(await userService.updateUser(req.body))
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async deleteUser(req, res, next) {
+        try {
+            return res.json(await userService.deleteUser(req.body))
         } catch (e) {
             next(e)
         }
@@ -110,36 +136,6 @@ class UserController {
             const newData = await userService.lastActivityAt(email)
 
             return res.json({message: `Дата последнего входа ${newData}`})
-        } catch (e) {
-            next(e)
-        }
-    }
-
-    async deleteUser(req, res, next) {
-        try {
-            const {email, id} = req.body
-            await userService.deleteUser(id)
-            return res.json({message: `Пользователь с почтой ${email} был удален`})
-        } catch (e) {
-            next(e)
-        }
-    }
-
-    async restoreUser(req, res, next) {
-        try {
-            const {email, id} = req.body
-            await userService.restoreUser(id)
-            return res.json({message: `Пользователь с почтой ${email} восстановлен`})
-        } catch (e) {
-            next(e)
-        }
-    }
-
-    async editRole(req, res, next) {
-        try {
-            const {id, editRole} = req.body
-            const newRole = await userService.editRole(id, editRole)
-            return res.json(newRole)
         } catch (e) {
             next(e)
         }
