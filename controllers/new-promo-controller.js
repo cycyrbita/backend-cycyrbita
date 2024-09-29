@@ -3,9 +3,6 @@ const NewPromoService = require('../service/new-promo-service')
 const fs = require("fs");
 const archiver = require("archiver");
 const path = require('path')
-const unzipper = require('unzipper')
-const newPromoDb = require('../models/new-promo-model')
-const dbTitle = require("../models/new-promo-title-model");
 
 class NewPromoController {
 
@@ -24,37 +21,39 @@ class NewPromoController {
 
   async downloadNewPromo(req, res, next) {
     try {
-      const { promo, link } = req.query
-      const archive = archiver('zip', { zlib: { level: 9 } })
-      const filePath = path.join(process.env.ROOT_PROMO_PATH, promo, link)
-      res.attachment(`${link}.zip`)
-      archive.on('error', (error) => console.log(error))
-      archive.pipe(res)
-      archive.directory(filePath, link)
-      archive.finalize();
+      await NewPromoService.downloadNewPromo(res, req)
+    }
+    catch (e) {
+      next(e)
+    }
+
+  }
+
+  async uploadArchive(req, res, next) {
+    try {
+      await NewPromoService.uploadArchive(req)
+      return res.status(200).json('архив загружен')
+    }
+    catch (e) {
+      console.log('ошибка в NewPromoService.uploadArchive, а именно:', e)
+      res.status(400).json(e)
+    }
+  }
+
+  async updateNewPromo(req, res, next) {
+    try {
+      await NewPromoService.updateNewPromo(req)
+      res.status(200).json('промо добавлено, создаем скриншот')
     }
     catch (e) {
       next(e)
     }
   }
 
-  async uploadNewPromo(req, res, next) {
+  async createScreenShot(req, res, next) {
     try {
-      const bufferStream = require('stream').Readable.from(req.files.archive.data);
-      const targetPath = path.join(process.env.ROOT_PROMO_PATH, req.body.title)
-      if (!fs.existsSync(targetPath)) {
-        fs.mkdirSync(targetPath)
-      }
-      bufferStream.pipe(unzipper.Extract({ path: targetPath }))
-        .on('error', (err) => {
-          console.error('Ошибка при разархивировании:', err);
-          res.status(500).send('Произошла ошибка при разархивировании файла.');
-        })
-        .on('close', async () => {
-          await NewPromoService.createOrUpdateNewPromo(req)
-          await NewPromoService.getScreenShot(req, targetPath)
-          res.status(200).send('Файл разархивирован')
-        });
+      await NewPromoService.getScreenShot(req)
+      res.status(200).json('готово')
     }
     catch (e) {
       next(e)
