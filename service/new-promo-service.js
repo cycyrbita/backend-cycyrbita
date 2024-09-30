@@ -60,7 +60,6 @@ class NewPromoService {
 
   async uploadArchive(req) {
     const isNewPromo = req.body.isNewPromo === 'true'
-    console.log(req.body)
     const bufferStream = require('stream').Readable.from(req.files.archive.data);
     const targetPath = path.join(process.env.ROOT_PROMO_PATH, req.body.title)
     const bufferPath = path.join(process.env.ROOT_BUFFER_DIRECTORY)
@@ -78,17 +77,31 @@ class NewPromoService {
           })
           .on('close', () => {
             //check structure
-            const bufferDirectory = fs.readdirSync(bufferPath)
+            const listBufferDirectory = fs.readdirSync(bufferPath)
+            const infoAboutFIle = fs.statSync(path.join(bufferPath, listBufferDirectory[0]))
 
             //return status 400 bsc structure is invalid
-            if (bufferDirectory.length !== 1 && !bufferDirectory.includes('index.html')) {
-              return reject('неправильная структура архива')
+            if (listBufferDirectory.length === 1 && !infoAboutFIle.isDirectory()) {
+              return reject('в архиве всего один файл, ты угораешь?')
+            }
+
+            if (listBufferDirectory.length === 1 && !fs.readdirSync(path.join(bufferPath, listBufferDirectory[0])).includes('index.html')) {
+              return reject('неправильная структура архива, а именно нету index.html в папке с промо')
+            }
+
+            if (listBufferDirectory.length !== 1 && !listBufferDirectory.includes('index.html')) {
+              return reject('неправильная структура архива, а именно нету index.html в архиве')
+            }
+
+            //rename promo directory as archiveName
+            if (listBufferDirectory.length === 1 && req.body.archiveName !== listBufferDirectory[0]) {
+              fs.renameSync(path.join(bufferPath, listBufferDirectory[0]), path.join(path.join(bufferPath, req.body.archiveName)))
             }
 
             //build correct structure
-            if (bufferDirectory.includes('index.html')) {
+            if (listBufferDirectory.includes('index.html')) {
               fs.mkdirSync(path.join(bufferPath, req.body.archiveName))
-              const array = bufferDirectory.filter(item => item !== req.body.archiveName)
+              const array = listBufferDirectory.filter(item => item !== req.body.archiveName)
               for (const item of array) {
                 fs.renameSync(path.join(bufferPath, item), path.join(path.join(bufferPath, req.body.archiveName, item)))
               }
@@ -96,20 +109,17 @@ class NewPromoService {
 
             //create directory for promo
             if (isNewPromo && fs.existsSync(targetPath)) {
-              return reject('ты выбрал новое промо, но такое промо уже есть. Кажется ты что то неправильно делаешь. Ну или никита опять все сломал')
+              return reject('ты создал новое промо, но такое промо уже есть. Кажется ты что то неправильно делаешь. Ну или никита опять все сломал')
             }
             if (isNewPromo) {
-              console.log('какого хуя, должно быть фолс, а по факту', isNewPromo)
               fs.mkdirSync(targetPath)
             }
 
+
             //move promo from buffer to target directory
-            console.log(fs.existsSync(path.join(targetPath, req.body.archiveName)))
             if (fs.existsSync(path.join(targetPath, req.body.archiveName))) {
-              console.log('ну это реджект, должен быть выход отсюда')
               return reject('промо с таким названием уже есть, кажется ты что то перепутал')
             }
-            console.log('тут меня не должно быть')
             fs.renameSync(path.join(path.join(bufferPath, req.body.archiveName)), path.join(targetPath, req.body.archiveName))
             return resolve()
           })
