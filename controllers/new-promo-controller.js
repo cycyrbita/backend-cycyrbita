@@ -53,7 +53,7 @@ class NewPromoController {
   async createScreenShot(req, res, next) {
     try {
       await NewPromoService.getScreenShot(req)
-      res.status(200).json('готово')
+      res.status(200).json('скриншот создан')
     }
     catch (e) {
       next(e)

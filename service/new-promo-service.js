@@ -78,9 +78,14 @@ class NewPromoService {
           .on('close', () => {
             //check structure
             const listBufferDirectory = fs.readdirSync(bufferPath)
-            const infoAboutFIle = fs.statSync(path.join(bufferPath, listBufferDirectory[0]))
+            const infoAboutFIle = listBufferDirectory.length !== 0 ? fs.statSync(path.join(bufferPath, listBufferDirectory[0])) : null
 
             //return status 400 bsc structure is invalid
+            if (listBufferDirectory.length === 0) {
+              return reject('архив пустой')
+            }
+
+
             if (listBufferDirectory.length === 1 && !infoAboutFIle.isDirectory()) {
               return reject('в архиве всего один файл, ты угораешь?')
             }
