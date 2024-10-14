@@ -1,4 +1,5 @@
 require('dotenv').config({ path: '../.env' })
+const mv = require('mv')
 const NewPromoModel = require('../models/new-promo-model')
 const NewPromoTitleModel = require('../models/new-promo-title-model')
 const fs = require("fs");
@@ -125,8 +126,10 @@ class NewPromoService {
             if (fs.existsSync(path.join(targetPath, req.body.archiveName))) {
               return reject('промо с таким названием уже есть, кажется ты что то перепутал')
             }
-            fs.renameSync(path.join(path.join(bufferPath, req.body.archiveName)), path.join(targetPath, req.body.archiveName))
-            return resolve()
+            mv(path.join(path.join(bufferPath, req.body.archiveName)), path.join(targetPath, req.body.archiveName), (err) => {
+              return err ? reject('ошибка при переносе директории') : resolve()
+            })
+
           })
       })
     }
