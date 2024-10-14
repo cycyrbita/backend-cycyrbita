@@ -154,7 +154,7 @@ class NewPromoService {
         }
       })
       const page = await browser.newPage()
-      const userData = await userService.login(process.env.SMTP_USER, process.env.SMTP_USER)
+      const userData = await userService.login(process.env.SCREENSHOT_ACCOUNT, process.env.SCREENSHOT_ACCOUNT)
       await page.setCookie({
         name: 'refreshToken',
         value: userData.refreshToken,
@@ -165,7 +165,6 @@ class NewPromoService {
         domain: process.env.DOMAIN
       })
       await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3738.0 Safari/537.36')
-      //TODO что то сделать с goto, потому что иногда ответ приходится ждать больше 2х мин
       await page.goto(url, { timeout: 0, waitUntil: "domcontentloaded" })
       await page.screenshot({ path: pathToScreenshot })
       await browser.close()
