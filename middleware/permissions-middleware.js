@@ -8,7 +8,7 @@ module.exports = async function (req, res, next, data = []) {
         const accessToken = req.cookies.accessToken
 
         // проверяем есть ли токен
-        if(!accessToken) return next(ApiError.UnauthorizedError())
+        if(!accessToken) return next(ApiError.UnauthorizedError('нету access в permissions-middleware'))
 
         // запускаем функцию проверки токена
         let user = tokenService.validateAccessToken(accessToken)
@@ -32,6 +32,6 @@ module.exports = async function (req, res, next, data = []) {
 
         next()
     } catch (e) {
-        return next(ApiError.UnauthorizedError())
+        return next(ApiError.UnauthorizedError('упал permissions-middleware'))
     }
 }

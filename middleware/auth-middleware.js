@@ -7,16 +7,16 @@ module.exports = function (req, res, next) {
         const accessToken = req.cookies.accessToken
 
         // проверяем есть ли токен
-        if(!accessToken) return next(ApiError.UnauthorizedError())
+        if(!accessToken) return next(ApiError.UnauthorizedError('проебан access token в auth-middleware'))
 
         // запускаем функцию проверки токена
         const userData = tokenService.validateAccessToken(accessToken)
 
         // если при валидации токена произошла ошибка
-        if(!userData) return next(ApiError.UnauthorizedError())
+        if(!userData) return next(ApiError.UnauthorizedError('при валидации токена произошла ошибка в auth-middleware'))
 
         // если пользователь заблокирован
-        if(userData.accountDeleted) return next(ApiError.UnauthorizedError())
+        if(userData.accountDeleted) return next(ApiError.UnauthorizedError('пользователь заблокирован в auth-middleware'))
 
         // помещаем в поле user данные о пользователе который лежал в токене
         req.user = userData
@@ -24,6 +24,6 @@ module.exports = function (req, res, next) {
         // передаем управление следующему middleware
         next()
     } catch (e) {
-        return next(ApiError.UnauthorizedError())
+        return next(ApiError.UnauthorizedError('auth-middleware упал'))
     }
 }

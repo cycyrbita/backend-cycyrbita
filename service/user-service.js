@@ -94,7 +94,7 @@ class UserService {
 
     async refresh(refreshToken) {
         // проверяем есть ли токен
-        if(!refreshToken) throw ApiError.UnauthorizedError()
+        if(!refreshToken) throw ApiError.UnauthorizedError('блять, в 5й раз нахуй проеверяем этот ебаный ацес токен ебаный')
 
         // вызываем функцию проверки токена
         const userData = tokenService.validateRefreshToken(refreshToken)
@@ -103,7 +103,7 @@ class UserService {
         const tokenFromDb = await tokenService.findToken(refreshToken)
 
         // если токен протух или нет в базе
-        if(!userData || !tokenFromDb) throw ApiError.UnauthorizedError()
+        if(!userData || !tokenFromDb) throw ApiError.UnauthorizedError('токен протух или нет в базе')
 
         // достаем пользователя по id из базы
         const user = await UserModel.findById(userData.id)
@@ -112,7 +112,7 @@ class UserService {
         const userDto = new UserDto(user)
 
         // проверка на удаление аккаунта
-        if(userDto.accountDeleted) throw ApiError.UnauthorizedError()
+        if(userDto.accountDeleted) throw ApiError.UnauthorizedError('акк снесли')
 
         // генерируем токены
         const tokens = tokenService.generateTokens({...userDto})
@@ -130,7 +130,7 @@ class UserService {
                 path: 'permissions'
             }
         }).populate('permissions')
-        if(user.accountDeleted) throw ApiError.UnauthorizedError()
+        if(user.accountDeleted) throw ApiError.UnauthorizedError('акк снесли, снова')
         return user
     }
 
