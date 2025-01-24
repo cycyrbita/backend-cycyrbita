@@ -56,10 +56,7 @@ io.on('connection', (socket) => {
 const start = async () => {
     try {
         // подключаемся к базе
-        await mongoose.connect(process.env.DB_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
+        await mongoose.connect(process.env.DB_URL, {})
         // стартуем сервер
         httpServer.listen(PORT, () => console.log(`Сервер запущен по адресу http://localhost:${PORT}`))
     } catch (e) {
