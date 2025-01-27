@@ -1,8 +1,5 @@
 require('dotenv').config({ path: '../.env' })
 const NewPromoService = require('../service/new-promo-service')
-const fs = require("fs");
-const archiver = require("archiver");
-const path = require('path')
 
 class NewPromoController {
 
@@ -32,7 +29,7 @@ class NewPromoController {
   async uploadArchive(req, res, next) {
     try {
       await NewPromoService.uploadArchive(req)
-      return res.status(200).json('архив загружен')
+      return res.status(200).json(`архив загружен ${req.body.count} / ${req.body.total}`)
     }
     catch (e) {
       console.log('ошибка в NewPromoService.uploadArchive, а именно:', e)
@@ -43,7 +40,7 @@ class NewPromoController {
   async updateNewPromo(req, res, next) {
     try {
       await NewPromoService.updateNewPromo(req)
-      res.status(200).json('промо добавлено, создаем скриншот')
+      res.status(200).json(`промо добавлено, создаем скриншот ${req.body.count} / ${req.body.total}`)
     }
     catch (e) {
       next(e)
@@ -53,7 +50,7 @@ class NewPromoController {
   async createScreenShot(req, res, next) {
     try {
       await NewPromoService.getScreenShot(req)
-      res.status(200).json('скриншот создан')
+      res.status(200).json(`скриншот создан ${req.body.count} / ${req.body.total}`)
     }
     catch (e) {
       next(e)
