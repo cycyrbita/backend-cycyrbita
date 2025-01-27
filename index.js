@@ -9,6 +9,7 @@ const fileUpload = require('express-fileupload')
 const { createServer } = require('http')
 const { Server } = require('socket.io')
 const authMiddleware = require('./middleware/auth-middleware')
+const permissionsMiddleware = require("./middleware/permissions-middleware");
 
 // порт нашего сервера
 const PORT = process.env.PORT || 5001
@@ -32,7 +33,7 @@ app.use('/api/', router)
 // обработка ошибок
 app.use(errorMiddleware)
 //отдаем статику промо
-app.use('/new_promo', [authMiddleware, express.static(process.env.PROMO_PATH)])
+app.use('/new_promo', [authMiddleware, (req, res, next) => permissionsMiddleware(req, res, next, ['new-promo']), express.static(process.env.PROMO_PATH)])
 
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
