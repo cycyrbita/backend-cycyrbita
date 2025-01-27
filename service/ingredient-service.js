@@ -69,7 +69,7 @@ class IngredientService {
                     {'names.name': {$regex: filterIngredients.name, $options: 'i'}},
                     {'themes.description': {$regex: filterIngredients.name, $options: 'i'}},
                 ]
-            }).count()
+            }).countDocuments()
 
             ingredients = await IngredientModel.find({
                 $or: [
