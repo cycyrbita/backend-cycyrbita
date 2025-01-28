@@ -32,8 +32,7 @@ class NewPromoController {
       return res.status(200).json(`архив загружен ${req.body.count} / ${req.body.total}`)
     }
     catch (e) {
-      console.log('ошибка в NewPromoService.uploadArchive, а именно:', e)
-      res.status(400).json(e)
+      res.status(400).json(e.message)
     }
   }
 

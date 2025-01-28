@@ -85,20 +85,20 @@ class NewPromoService {
 
       //return status 400 bsc structure is invalid
       if (listBufferDirectory.length === 0) {
-        return new Error('архив пустой')
+        throw new Error('архив пустой')
       }
 
 
       if (listBufferDirectory.length === 1 && !infoAboutFIle.isDirectory()) {
-        return new Error('в архиве всего один файл, ты угораешь?')
+        throw new Error('в архиве всего один файл, ты угораешь?')
       }
 
       if (listBufferDirectory.length === 1 && !fs.readdirSync(path.join(extractPath, listBufferDirectory[0])).includes('index.html')) {
-        return new Error('неправильная структура архива, а именно нету index.html в папке с промо')
+        throw new Error('неправильная структура архива, а именно нету index.html в папке с промо')
       }
 
       if (listBufferDirectory.length !== 1 && !listBufferDirectory.includes('index.html')) {
-        return new Error('неправильная структура архива, а именно нету index.html в архиве')
+        throw new Error('неправильная структура архива, а именно нету index.html в архиве')
       }
 
       //rename promo directory as archiveName
@@ -117,23 +117,21 @@ class NewPromoService {
 
       //create directory for promo
       if (isNewPromo && fs.existsSync(targetPath)) {
-        return new Error('ты создал новое промо, но такое промо уже есть. Кажется ты что то неправильно делаешь. Ну или никита опять все сломал')
+        throw new Error('ты создал новое промо, но такое промо уже есть. Кажется ты что то неправильно делаешь. Ну или никита опять все сломал')
       }
       if (isNewPromo) {
         fs.mkdirSync(targetPath)
       }
-
       //move promo from buffer to target directory
       if (fs.existsSync(path.join(targetPath, req.body.archiveName))) {
-        return new Error('промо с таким названием уже есть, кажется ты что то перепутал')
+        throw new Error('промо с таким названием уже есть, кажется ты что то перепутал')
       }
       mv(path.join(path.join(extractPath, req.body.archiveName)), path.join(targetPath, req.body.archiveName), (err) => {
         return err ? new Error('ошибка при переносе директории') : undefined
       })
     }
     catch (error) {
-      console.log(error)
-      throw new error(error)
+      throw error
     }
 
   }
